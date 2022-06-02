@@ -18,11 +18,11 @@ namespace Nika
             int upperBorder = 1000;
 
             Random random = new Random();  
-            int n = random.Next(lowerNumber, upperNumber);   
+            int number = random.Next(lowerNumber, upperNumber);   
 
             Console.WriteLine("Число N - " + n);
 
-            for (int i = 0; i < upperBorder; i+=n)
+            for (int i = 0; i < upperBorder; i+= number)
             { 
               
                 if (i > lowerBorder)
