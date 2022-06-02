@@ -13,7 +13,7 @@ namespace Nika
             //домашнее задание: кратность: 
 
             int lowerNumber = 1;
-            int upperNumber = 28;
+            int upperNumber = 27;
             int lowerBorder = 100;
             int upperBorder = 1000;
 
