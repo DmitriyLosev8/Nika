@@ -10,29 +10,23 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            // домашнее задание: Вывод имени:
+            //домашнее задание: кратность: 
 
-            string name;
-            string symbol;
-            int amountOfSymbolsInName;
-            string topAndLower;
-            Console.WriteLine("Напишите Ваше имя:");
-            name = Console.ReadLine();
-            amountOfSymbolsInName = name.Length;
+            int upperBorder = 1000;
+            int lowerBorder = 100;
+            Random random = new Random();  
+            int n = random.Next(1, 27);   
 
-            Console.WriteLine("Введите любой один символ и ваше имя окажется внутри прямоугольника, состоящего из этого символа:");
-            symbol = Console.ReadLine();
-            topAndLower = symbol;
-            for (int i = 0; i <= amountOfSymbolsInName; i++)
+            Console.WriteLine("Число N - " + n);
 
-            {
-                topAndLower += symbol;
+            for (int i = 0; i < upperBorder; i+=n)
+            { 
+              
+                if (i > lowerBorder)
+                {
+                    Console.WriteLine(i);
+                } 
             }
-
-            Console.WriteLine(topAndLower);
-            Console.WriteLine(symbol + name + symbol);
-            Console.WriteLine(topAndLower);
-
         }
     }
 }
