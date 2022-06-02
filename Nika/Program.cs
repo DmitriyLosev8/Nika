@@ -12,10 +12,13 @@ namespace Nika
         {
             //домашнее задание: кратность: 
 
-            int upperBorder = 1000;
+            int lowerNumber = 1;
+            int upperNumber = 28;
             int lowerBorder = 100;
+            int upperBorder = 1000;
+
             Random random = new Random();  
-            int n = random.Next(1, 27);   
+            int n = random.Next(lowerNumber, upperNumber);   
 
             Console.WriteLine("Число N - " + n);
 
