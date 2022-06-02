@@ -10,26 +10,42 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            //домашнее задание: кратность: 
+            //домашнее задание: степень двойки: 
 
             int lowerNumber = 1;
-            int upperNumber = 27;
-            int lowerBorder = 100;
-            int upperBorder = 1000;
+            int upperNumber = 100;
+            int stepen;
+            int numberStepen = 2;
+            int tempN = 0;
 
-            Random random = new Random();  
-            int number = random.Next(lowerNumber, upperNumber);   
+            Random random = new Random();
+            int number = random.Next(lowerNumber, upperNumber);      //условно тут число 50
 
-            Console.WriteLine("Число N - " + number);
+            Console.WriteLine("Стартовое число - " + number);
 
-            for (int i = 0; i < upperBorder; i+= number)
-            { 
-              
-                if (i > lowerBorder)
-                {
-                    Console.WriteLine(i);
-                } 
+          // while (tempN <= number)
+           // {
+           //     tempN++;
+          //      if (tempN = number)
+
+          //  }
+           
+            
+
+
+
+
+
+            for (int i = number; i < upperNumber; i++)
+            {
+                if (i % numberStepen == 0)
+               {
+                       Console.WriteLine(i);
+                }
+               
             }
+           
+            
         }
     }
 }
