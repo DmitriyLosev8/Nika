@@ -20,7 +20,7 @@ namespace Nika
             Random random = new Random();  
             int number = random.Next(lowerNumber, upperNumber);   
 
-            Console.WriteLine("Число N - " + n);
+            Console.WriteLine("Число N - " + number);
 
             for (int i = 0; i < upperBorder; i+= number)
             { 
