@@ -10,42 +10,42 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            //домашнее задание: степень двойки: 
-
-            int lowerNumber = 1;
-            int upperNumber = 100;
-            int stepen;
-            int numberStepen = 2;
-            int tempN = 0;
-
+            // дамашнее задание: локальные максимумы:   В ПРОЦЕССЕ!!!!!!!!!!!!!!!!!!!!!!!!
+            
+            int[] array = new int[30];
+            Console.WriteLine(array.Length);
             Random random = new Random();
-            int number = random.Next(lowerNumber, upperNumber);      //условно тут число 50
-
-            Console.WriteLine("Стартовое число - " + number);
-
-          // while (tempN <= number)
-           // {
-           //     tempN++;
-          //      if (tempN = number)
-
-          //  }
-           
-            
+            int minimalNumber = 0;
+            int maximulNumber = 100;
+            int maximalElement = int.MinValue;
 
 
-
-
-
-            for (int i = number; i < upperNumber; i++)
+            for (int i = 0; i < array.Length; i++)
             {
-                if (i % numberStepen == 0)
-               {
-                       Console.WriteLine(i);
+                array[i] = random.Next(minimalNumber, maximulNumber);
+                Console.WriteLine(array[i]);
+
+
+                if (maximalElement < (array[i] -1) && maximalElement < (array[i] + 1))                  
+                {
+                    maximalElement = array[i];
                 }
-               
             }
-           
-            
+            Console.WriteLine("Дальше идут локальные максимумы:");
+            Console.WriteLine(maximalElement);
+
+
+
+
+
+
+
+
+
+
+            //Console.WriteLine(array[i]);
         }
+
     }
+    
 }
