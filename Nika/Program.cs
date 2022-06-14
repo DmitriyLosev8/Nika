@@ -10,42 +10,51 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            // дамашнее задание: локальные максимумы:   В ПРОЦЕССЕ!!!!!!!!!!!!!!!!!!!!!!!!
+            // домашнее задание: динамический массив:
+
+            int sum = 0;
+            int userInput;
+            char userComand;
+            bool isWorking = true;
+            int[] number = new int[0];
             
-            int[] array = new int[30];
-            Console.WriteLine(array.Length);
-            Random random = new Random();
-            int minimalNumber = 0;
-            int maximulNumber = 100;
-            int maximalElement = int.MinValue;
-
-
-            for (int i = 0; i < array.Length; i++)
+            while (isWorking)
             {
-                array[i] = random.Next(minimalNumber, maximulNumber);
-                Console.WriteLine(array[i]);
+                int[] tempNumber = new int[number.Length + 1];
+                Console.WriteLine("Нажмитие английскую букву w, чтобы ввести число\n\n" +
+                    "Нажмите английскую букву s, чтобы суммировать все введённые вами числа\n\nНажмите английскую букву e, чтобы выйти.\n");
+                userComand = Convert.ToChar(Console.ReadLine());
 
-
-                if (maximalElement < (array[i] -1) && maximalElement < (array[i] + 1))                  
+                switch (userComand)
                 {
-                    maximalElement = array[i];
+                    case 'w':
+                        Console.WriteLine("Введите любое число и программа его запомнит:");
+
+                        for (int i = 0; i < number.Length; i++)
+                        {
+                           tempNumber[i] = number[i]; 
+                        }
+                        userInput = Convert.ToInt32(Console.ReadLine());
+                        tempNumber[tempNumber.Length - 1] = userInput;
+                        number = tempNumber;
+                       break;
+                    case 's':
+
+                        for (int i = 0; i < number.Length; i++)
+                        {
+                            sum  +=  number[i];  
+                        }
+                        Console.Write("Сумма введённых вами чисел - " + sum);
+                        break;
+                    case 'e':
+                        isWorking = false;
+                        break;
                 }
+                Console.ReadKey();
+                Console.Clear();
             }
-            Console.WriteLine("Дальше идут локальные максимумы:");
-            Console.WriteLine(maximalElement);
-
-
-
-
-
-
-
-
-
-
-            //Console.WriteLine(array[i]);
         }
-
     }
-    
 }
+
+
