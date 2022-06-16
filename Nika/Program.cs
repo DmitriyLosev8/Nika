@@ -10,51 +10,37 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            // домашнее задание: динамический массив:
 
-            int sum = 0;
-            int userInput;
-            char userComand;
-            bool isWorking = true;
-            int[] number = new int[0];
-            
-            while (isWorking)
+            // домашнее задание: подмассив повторейний чисел:
+
+            int[] array = { 2, 6, 4, 8, 8, 8, 5, 6, 4, 8, 6, 4, 4, 4, 4, 4, 4, 3, 2, 8, };
+            int firstnumber;
+            int secondmumber;
+            int count = 0;
+
+            for (int i = 1; i < array.Length - 1; i++)
             {
-                int[] tempNumber = new int[number.Length + 1];
-                Console.WriteLine("Нажмитие английскую букву w, чтобы ввести число\n\n" +
-                    "Нажмите английскую букву s, чтобы суммировать все введённые вами числа\n\nНажмите английскую букву e, чтобы выйти.\n");
-                userComand = Convert.ToChar(Console.ReadLine());
-
-                switch (userComand)
+                if (array[i] == array[i - 1] || array[i] == array[i + 1])
                 {
-                    case 'w':
-                        Console.WriteLine("Введите любое число и программа его запомнит:");
 
-                        for (int i = 0; i < number.Length; i++)
-                        {
-                           tempNumber[i] = number[i]; 
-                        }
-                        userInput = Convert.ToInt32(Console.ReadLine());
-                        tempNumber[tempNumber.Length - 1] = userInput;
-                        number = tempNumber;
-                       break;
-                    case 's':
+                    Console.WriteLine(array[i] + " ");
 
-                        for (int i = 0; i < number.Length; i++)
-                        {
-                            sum  +=  number[i];  
-                        }
-                        Console.Write("Сумма введённых вами чисел - " + sum);
-                        break;
-                    case 'e':
-                        isWorking = false;
-                        break;
+                    if (array[i] != array[i + 1])
+                    {
+
+                        Console.WriteLine(array[i] + " ");
+                    }
+
                 }
-                Console.ReadKey();
-                Console.Clear();
+
             }
+
         }
     }
 }
+
+
+
+
 
 
