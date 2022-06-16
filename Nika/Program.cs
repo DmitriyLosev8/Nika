@@ -11,31 +11,29 @@ namespace Nika
         static void Main(string[] args)
         {
 
-            // домашнее задание: сортировка чисел:
+            // домашнее задание: подмассив повторейний чисел:
 
-            int[] array = {3,8,7,9,5,6,1,2,4};
+            int[] array = { 2, 6, 4, 8, 8, 8, 5, 6, 4, 8, 6, 4, 4, 4, 4, 4, 4, 3, 2, 8, };
+            int firstnumber;
+            int secondmumber;
+            int count = 0;
 
-            int[] tempArray = array;
-
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 1; i < array.Length - 1; i++)
             {
-              for (int j = 0; j < tempArray.Length; j++)   // дальше надо думать
+                if (array[i] == array[i + 1]) 
+                {    
+                    count ++;    
+
+                }                   //доделать
+                if (array[i] != array[i + 1])
                 {
-                    if (array[i] < tempArray[j])
-                    {
-                        tempArray[j] = tempArray[j - 1];
-                    }
+                    break;
                 }
+
+
+
             }
-            for (int i = 0; i < tempArray.Length; i++)
-            {
-                Console.WriteLine(tempArray[i]);
-            }
-
-
-
-
-
+            Console.WriteLine(count);     // доделать. их нужно ещё сравнить
         }
     }
 }
