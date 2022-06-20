@@ -13,14 +13,14 @@ namespace Nika
 
             // домашнее задание: split:
 
-            string str = "Каждый охотник желает знать где сидит фазан";
-            string[] words = str.Split(' ');
+            string text = "Каждый охотник желает знать где сидит фазан";
+            
+            string[] words = text.Split(' ');
 
             foreach (string word in words)
             {
                 Console.WriteLine(word);
             }
-
         }
     }
 }
