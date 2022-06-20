@@ -11,29 +11,16 @@ namespace Nika
         static void Main(string[] args)
         {
 
-            // домашнее задание: подмассив повторейний чисел:
+            // домашнее задание: split:
 
-            int[] array = { 2, 6, 4, 8, 8, 8, 5, 6, 4, 8, 6, 4, 4, 4, 4, 4, 4, 3, 2, 8, };
-            int firstnumber;
-            int secondmumber;
-            int count = 0;
+            string str = "Каждый охотник желает знать где сидит фазан";
+            string[] words = str.Split(' ');
 
-            for (int i = 1; i < array.Length - 1; i++)
+            foreach (string word in words)
             {
-                if (array[i] == array[i + 1]) 
-                {    
-                    count ++;    
-
-                }                   //доделать
-                if (array[i] != array[i + 1])
-                {
-                    break;
-                }
-
-
-
+                Console.WriteLine(word);
             }
-            Console.WriteLine(count);     // доделать. их нужно ещё сравнить
+
         }
     }
 }
