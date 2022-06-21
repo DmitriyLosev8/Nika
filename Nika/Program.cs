@@ -11,16 +11,40 @@ namespace Nika
         static void Main(string[] args)
         {
 
-            // домашнее задание: split:
+            // домашнее задание: сдвиг значений массива:
 
-            string text = "Каждый охотник желает знать где сидит фазан";
-            
-            string[] words = text.Split(' ');
+            int[] array = { 1, 2, 3, 4,};
+            int userInput;
+            int tempNumber;
 
-            foreach (string word in words)
+            Console.WriteLine("Исходный массив:");
+            for (int i = 0; i < array.Length; i++)
             {
-                Console.WriteLine(word);
+                Console.Write(array[i] + " | ");
             }
+            Console.WriteLine("\n\nЧтобы сдвинуть значения элементов массива влево, введите число на сколько позиций будет сдвиг:");
+            userInput = Convert.ToInt32(Console.ReadLine());
+
+            for (int i = 0; i < array.Length; i++) 
+            {
+               
+                if (i == userInput - 1)
+                {
+                    tempNumber = array[userInput - 1];
+
+                    for (int j = 1; j < array.Length; j++)
+                    {
+                        array[j - 1] = array[j];
+                    }
+                    array[array.Length - 1] = tempNumber;
+                }   
+            }
+            Console.WriteLine("Изменённый массив:");
+            for (int i = 0; i < array.Length; i++)
+              {
+                  Console.Write(array[i] + " | ");
+             }
+            Console.WriteLine();
         }
     }
 }
