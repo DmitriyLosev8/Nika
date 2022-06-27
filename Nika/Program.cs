@@ -9,58 +9,141 @@ namespace Nika
     internal class Program
     {
         static void Main(string[] args)
-        {     
-            //домашнее задание: некий бар:
+        {
+            // Задание: Кадровый учёт:   недоделанное
+
+            string[] fio = new string[0];
+            string[] post = new string[0];
+            string userInformation;
+            string userInput;
+            bool isWorking = true;
+            int DossierToDelete;
+            int numberToCorrectInputOrUotput = 1;
+            int numberOfDossier = 0;
+
+
+
+            while (isWorking)
+            {
+                Console.SetCursorPosition(45, 0);
+                Console.WriteLine("ПЕРЕД ВАМИ ПРОГРАММА КАДРОВОГО УЧЁТА");
+                Console.SetCursorPosition(0, 2);
+                Console.WriteLine("Нажмите 1, чтобы добавить досье\nНажмите 2, чтобы показать все досье\nНажмите 3, чтобы удалить какое-то досье\n" +
+                    "Нажмите 4, для поиска досье по фамилии\nНажмите 5, чтобы выйти\n\n");
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case "1":
+                        Console.WriteLine("Введите Ваши ФИО:");
+                        userInformation = Console.ReadLine();
+                        fio = AddDossier(fio, userInformation);
+                        Console.WriteLine("Введите Вашe должность:");
+                        userInformation = Console.ReadLine();
+                        post = AddDossier(post, userInformation);
+                        break;
+                    case "2":
+                        Console.WriteLine("Вот список досье:\n");
+
+                        for (int i = 0; i < fio.Length; i++)
+                        {
+                            for (int j = 0; j < post.Length; j++)
+                            {
+                                if (i == j)
+                                {
+                                    Console.Write((i + numberToCorrectInputOrUotput) + ") " + fio[i] + "-" + post[j] + ", ");
+                                }
+                            }
+                        }
+                        break;
+                    case "3":
+                        Console.WriteLine("Какое по счёту досье вы хотите удалить?");
+                        DossierToDelete = Convert.ToInt32(Console.ReadLine());
+                        DeleteDossier(ref fio, DossierToDelete);
+                        DeleteDossier(ref post, DossierToDelete);
+                        break;
+                    case "4":
+                        Console.WriteLine("Введите фамилию и мы покажем вам это досье:");
+                        userInformation = Console.ReadLine();
+                        SearchOfFio(out fio, userInformation,numberOfDossier);
+
+                        Console.WriteLine("Вот это досье:\n");
+
+                        for (int i = 0; i < fio.Length; i++)
+                        {
+                            for (int j = 0; j < post.Length; j++)
+                            {
+                                if (i == numberOfDossier)
+                                {
+                                    Console.Write((i + numberToCorrectInputOrUotput) + ") " + fio[i] + "-" + post[j] + ", ");
+                                }
+                            }
+                        }
+                        break;
+                    case "5":
+                        isWorking = false;
+                        break;
+                }
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        static string[] AddDossier(string[] partOfDossier, string userInformation)
+        {
+            string[] tempPartOfDossier = new string[partOfDossier.Length + 1];
+
+            for (int i = 0; i < partOfDossier.Length; i++)
+            {
+                tempPartOfDossier[i] = partOfDossier[i];
+            }
+            tempPartOfDossier[tempPartOfDossier.Length - 1] = userInformation;
+            partOfDossier = tempPartOfDossier;
+            return partOfDossier;
+        }
+
+        static void DeleteDossier(ref string[] partOfDossier, int DossierToDelete)
+        {
+            int numberToCorrectInput = 1;
             
-            int health = 5, maxHealth = 10;   
-            int mana = 3, maxMana = 10;
-
-           while (true)
+            if (DossierToDelete - numberToCorrectInput > partOfDossier.Length)
             {
-                DrawBar(health, maxHealth, ConsoleColor.Red, 0, '#');   // и вызываем функцию DrawBar, куда и помещаем наши переменные, а также вводим нужный нам цвет
-                DrawBar(mana, maxMana, ConsoleColor.Blue, 1);    // так отрисует голубым, но здоровье (health), чтобы рисовал 2, надо изменить функцию
+                Console.WriteLine("Такого досье нет, введите корректный номер досье");
+            }
+            
+            string[] tempPartOfDossier = new string[partOfDossier.Length - 1];
 
-                Console.SetCursorPosition(0, 5);   // убираем вопросы пониже, чтобы было удобно
+            for (int i = 0; i < DossierToDelete - numberToCorrectInput; i++)
+            {
+                tempPartOfDossier[i] = partOfDossier[i];
+            }
 
-                Console.Write("Введите число, на которое изменятся жизни:");   // делаем так, чтобы количество жизней вводил пользователь и мог их менять
-                health += Convert.ToInt32(Console.ReadLine());         // берём значение введёное пользователем
-                Console.Write("Введите число, на которое изменится магия:");   // делаем так, чтобы количество магии вводил пользователь и мог его менять
-                mana += Convert.ToInt32(Console.ReadLine());         // берём значение введёное пользователем
-
-                Console.ReadKey();   //чтобы цикл постоянно не воспроизводился, а нужно было нажатие пользователя
-                Console.Clear(); //стираем консоль, чтобы она обновлялась
-            } 
+            for (int i = DossierToDelete; i < partOfDossier.Length; i++)
+            {
+                tempPartOfDossier[i - 1] = partOfDossier[i];
+            }
+            partOfDossier = tempPartOfDossier;
         }
 
-        //ЭТО ТОЛЬКО ФУНКЦИЯ РИСОВАНИЯ, А ВЫШЕ МОЖНО ПОДСТАВЛЯТЬ ЛЮБОЙ БАР (ЗДОРОВЬЯ, МАНА, БРОНЯ И ТД)
-        
-        static void DrawBar( int value, int maxValue, ConsoleColor color, int position, char symbol = ' ')   // это будет функция, которая рисует некий бар (здоровья, маны и тд. но ничего не возвращает (void)
-        {                                                                     // ДОБАВИЛИ ПЕРЕМЕННУЮ ПОЗИЦИЯ, ЧТОБЫ РАЗДЕЛЯТЬ РАЗНЫЕ БАРЫ и необязательный char для заполненности
-            ConsoleColor defaulColor = Console.BackgroundColor;   //запоминаем обычный цвет консоли, чтобы потом можно было его вернуть
+        static void SearchOfFio(out string[] partOfDossier, string userInformation, int numberOfDossier)
+        {  
+            string familia;
 
-            string bar = "";  // сюда мы будем записывать колличество каки-то наших элементов, сделаем это черз цикл for
-
-            for (int i = 0; i < value; i++)   // value - это показатель нашего чего-то (здоровья, маны и тд)
+            for (int i = 0; i < partOfDossier.Length; i++)
             {
-                bar += symbol;   // внутри цикла прибавляем к bar  по одному символу  (добавлю от себя - тут можно сделать условие, что if если value кратно 10 или 5, то тогда добавляем символ
+                familia = partOfDossier[i];
+                string[] separateFio = familia.Split();
 
+                for (int j = 0; j < separateFio.Length; j++)
+                {
+                    if (separateFio[j] == userInformation)
+                    {
+                        numberOfDossier = i;
+                    }
+                }   
             }
-            Console.SetCursorPosition(0, position);   // устанавливаем курсор в полностью нулевую позицию // ДОБАВИЛИ ПЕРЕМЕННУЮ ПОЗИЦИЯ, ЧТОБЫ РАЗДЕЛЯТЬ РАЗНЫЕ БАРЫ
-            Console.Write('[');  // и начинаем рисовать. Для начала у нас будет квадратная открывающая скобка
-            Console.BackgroundColor = color;  // далее назначаем цвет текста
-            Console.Write(bar);    // и выводим нашу строку bar
-            Console.BackgroundColor = defaulColor; // так как заполненую часть бара мы отрисовали, то возвращем цвет текста на стандартный
-
-            bar = "";  // говорим, что bar  - это пустая строка, чтобы заполнить пустую часть нашего бара
-            // далее отрисовываем нашу НЕзаполненную часть:
-
-            for (int i = value; i < maxValue; i++)  // так как это отрисовка пустой части, то i = value и пока i < maxValue (максимальное значение здоровья, маны и тд) тогда прибавляем i (рисуем)
-            {
-                bar += symbol;  // нарисовали пустые строки
-            }
-            Console.Write(bar + ']');  // и в конце рисуем наш бар (его пустую часть) и закрывающую скобку
+           //return partOfDossier;
         }
-
     }
 }
 
