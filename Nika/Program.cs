@@ -10,7 +10,7 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            // Задание: Кадровый учёт:   недоделанное
+            // Задание: Кадровый учёт:   доделать поиск по фамилии
 
             string[] fio = new string[0];
             string[] post = new string[0];
