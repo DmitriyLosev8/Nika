@@ -10,142 +10,71 @@ namespace Nika
     {
         static void Main(string[] args)
         {
-            // Задание: Кадровый учёт:   доделать поиск по фамилии
+            // Задание: UIElement:    
 
-            string[] fio = new string[0];
-            string[] post = new string[0];
-            string userInformation;
-            string userInput;
-            bool isWorking = true;
-            int DossierToDelete;
-            int numberToCorrectInputOrUotput = 1;
-            int numberOfDossier = 0;
+            char[] healthBar = new char[0];
+            int userInput;
 
-
-
-            while (isWorking)
-            {
-                Console.SetCursorPosition(45, 0);
-                Console.WriteLine("ПЕРЕД ВАМИ ПРОГРАММА КАДРОВОГО УЧЁТА");
-                Console.SetCursorPosition(0, 2);
-                Console.WriteLine("Нажмите 1, чтобы добавить досье\nНажмите 2, чтобы показать все досье\nНажмите 3, чтобы удалить какое-то досье\n" +
-                    "Нажмите 4, для поиска досье по фамилии\nНажмите 5, чтобы выйти\n\n");
-                userInput = Console.ReadLine();
-
-                switch (userInput)
-                {
-                    case "1":
-                        Console.WriteLine("Введите Ваши ФИО:");
-                        userInformation = Console.ReadLine();
-                        fio = AddDossier(fio, userInformation);
-                        Console.WriteLine("Введите Вашe должность:");
-                        userInformation = Console.ReadLine();
-                        post = AddDossier(post, userInformation);
-                        break;
-                    case "2":
-                        Console.WriteLine("Вот список досье:\n");
-
-                        for (int i = 0; i < fio.Length; i++)
-                        {
-                            for (int j = 0; j < post.Length; j++)
-                            {
-                                if (i == j)
-                                {
-                                    Console.Write((i + numberToCorrectInputOrUotput) + ") " + fio[i] + "-" + post[j] + ", ");
-                                }
-                            }
-                        }
-                        break;
-                    case "3":
-                        Console.WriteLine("Какое по счёту досье вы хотите удалить?");
-                        DossierToDelete = Convert.ToInt32(Console.ReadLine());
-                        DeleteDossier(ref fio, DossierToDelete);
-                        DeleteDossier(ref post, DossierToDelete);
-                        break;
-                    case "4":
-                        Console.WriteLine("Введите фамилию и мы покажем вам это досье:");
-                        userInformation = Console.ReadLine();
-                        SearchOfFio(out fio, userInformation,numberOfDossier);
-
-                        Console.WriteLine("Вот это досье:\n");
-
-                        for (int i = 0; i < fio.Length; i++)
-                        {
-                            for (int j = 0; j < post.Length; j++)
-                            {
-                                if (i == numberOfDossier)
-                                {
-                                    Console.Write((i + numberToCorrectInputOrUotput) + ") " + fio[i] + "-" + post[j] + ", ");
-                                }
-                            }
-                        }
-                        break;
-                    case "5":
-                        isWorking = false;
-                        break;
-                }
-                Console.ReadKey();
-                Console.Clear();
-            }
+            Console.WriteLine("Введите сколько процентов жизни вы хотите отобразить. Вводить нужно число кратное 10 (20, 40, 80 и .тд.)");
+            userInput = Convert.ToInt32(Console.ReadLine());
+            healthBar = DrawBar(healthBar, userInput);
         }
 
-        static string[] AddDossier(string[] partOfDossier, string userInformation)
+        static char[] DrawBar(char[] healthBar, int userInput)
         {
-            string[] tempPartOfDossier = new string[partOfDossier.Length + 1];
+            char procentOfHealth = '#';
+            char emptyHealth = ' ';
+            int multiplicity = 10;
+            int fullHealth = 100;
 
-            for (int i = 0; i < partOfDossier.Length; i++)
+            if (procentOfHealth < 10 || procentOfHealth > 100)
             {
-                tempPartOfDossier[i] = partOfDossier[i];
+                Console.WriteLine("Введите корректное значение");
             }
-            tempPartOfDossier[tempPartOfDossier.Length - 1] = userInformation;
-            partOfDossier = tempPartOfDossier;
-            return partOfDossier;
-        }
-
-        static void DeleteDossier(ref string[] partOfDossier, int DossierToDelete)
-        {
-            int numberToCorrectInput = 1;
-            
-            if (DossierToDelete - numberToCorrectInput > partOfDossier.Length)
+            else
             {
-                Console.WriteLine("Такого досье нет, введите корректный номер досье");
-            }
-            
-            string[] tempPartOfDossier = new string[partOfDossier.Length - 1];
+                Console.WriteLine("\nВот ваш healthBar:\n");
+                Console.Write("[");
 
-            for (int i = 0; i < DossierToDelete - numberToCorrectInput; i++)
-            {
-                tempPartOfDossier[i] = partOfDossier[i];
-            }
-
-            for (int i = DossierToDelete; i < partOfDossier.Length; i++)
-            {
-                tempPartOfDossier[i - 1] = partOfDossier[i];
-            }
-            partOfDossier = tempPartOfDossier;
-        }
-
-        static void SearchOfFio(out string[] partOfDossier, string userInformation, int numberOfDossier)
-        {  
-            string familia;
-
-            for (int i = 0; i < partOfDossier.Length; i++)
-            {
-                familia = partOfDossier[i];
-                string[] separateFio = familia.Split();
-
-                for (int j = 0; j < separateFio.Length; j++)
+                for (int i = 0; i < userInput / multiplicity; i++)
                 {
-                    if (separateFio[j] == userInformation)
+                    char[] tempHealthBar = new char[healthBar.Length + 1];
+
+                    for (int j = 0; j < healthBar.Length; j++)
                     {
-                        numberOfDossier = i;
+                        tempHealthBar[j] = healthBar[j];
                     }
-                }   
+                    tempHealthBar[tempHealthBar.Length - 1] = procentOfHealth;
+                    healthBar = tempHealthBar;
+
+                    Console.Write(healthBar[i]);
+                }
+
+                for (int i = userInput / multiplicity; i < fullHealth / multiplicity; i++)
+                {
+                    char[] tempHealthBar = new char[healthBar.Length + 1];
+
+                    for (int j = 0; j < healthBar.Length; j++)
+                    {
+                        tempHealthBar[j] = healthBar[j];
+                    }
+                    tempHealthBar[tempHealthBar.Length - 1] = emptyHealth;
+                    healthBar = tempHealthBar;
+
+                    Console.Write(healthBar[i]);
+                }
+                Console.Write("]");
+                Console.WriteLine();
             }
-           //return partOfDossier;
+            return healthBar;
         }
     }
 }
+
+
+
+
+
 
 
 
