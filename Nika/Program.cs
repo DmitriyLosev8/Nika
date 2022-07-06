@@ -9,39 +9,28 @@ namespace CSLight
     internal class Program
     {
         static void Main(string[] args)
-        {      //Задание: толковый словарь:    
+        {      //Задание: очередь в магазине:    
 
-            Dictionary<string, string> fullNames = new Dictionary<string, string>();
+            Queue<int> queueToStore = new Queue<int>();
+            queueToStore.Enqueue(50);
+            queueToStore.Enqueue(80);
+            queueToStore.Enqueue(45);
+            queueToStore.Enqueue(36);
+            queueToStore.Enqueue(67);
+            queueToStore.Enqueue(90);
+            queueToStore.Enqueue(250);
 
-            fullNames.Add("Георгий", "Золотарёв");
-            fullNames.Add("Степан", "Калин");
-            fullNames.Add("Сергей", "Бондаренко");
-            fullNames.Add("Николай", "Киреев");
-            fullNames.Add("Александр", "Гордеев");
-
-            ShowingLastName(fullNames);
+            int amountOfPurchases = 0;
+            serviceOfClients(queueToStore, amountOfPurchases);
         }
-
-        static void ShowingLastName(Dictionary<string, string> fullNames)
+        static void serviceOfClients(Queue<int> queueToStore,int amountOfPurchases)
         {
-            string userInput;
-            bool isWorking = true;
-
-            while (isWorking)
+            foreach (var client in queueToStore)
             {
-                Console.WriteLine("Напишите имя и мы покажем вам фамилию этого человека");
-                userInput = Console.ReadLine();
-
-                if (fullNames.ContainsKey(userInput))
-                {
-                    Console.WriteLine("Вот фамилия этого человека - " + fullNames[userInput]);
-                    isWorking = false;
-                }
-                else
-                {
-                    Console.WriteLine("Такого человека нет, нажмите Enter, чтобы попробовать снова:");
-                    Console.ReadKey();
-                }
+                amountOfPurchases += client;
+                Console.WriteLine("Текущая сумма покупок всех клиентов - " + amountOfPurchases + ", нажмите любою клавишу, чтобы обслужить следующего клиента:");
+                Console.ReadKey(true);
+                Console.Clear();
             }
         }
     }
