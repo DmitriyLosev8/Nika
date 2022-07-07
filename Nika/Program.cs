@@ -17,8 +17,6 @@ namespace CSLight
             seats.AddRange(chairs);
             seats.AddRange(armchairs);
 
-            
-
             SearchAndDeleteRepeatingStrings(seats, chairs, armchairs);
             ShowingAllUniqueSeats(seats);
         }
@@ -26,54 +24,56 @@ namespace CSLight
         static void SearchAndDeleteRepeatingStrings(List<string> seats, string[] chairs, string[] armchairs)
         {
             string repeatingString;
+            int repeatingElement;
 
-            List<string> tempSeats = seats;
+            List<string> tempSeats =new List<string>();
+            tempSeats.AddRange(armchairs);
+            tempSeats.AddRange(chairs);
+
+            int count = 0;
 
 
-            int count =0;
-
-           
             for (int i = 0; i < seats.Count; i++)
             {
-                for (int j =0; j < tempSeats.Count; j++)
+                for (int j = 0; j < tempSeats.Count; j++)
                 {
                     if (seats[i] == tempSeats[j])
                     {
-                        repeatingString = seats[i];
                         count++;
-                        if (count > 1)
-                        {
-                            //repeatingString = seats[i];
-                           // Console.WriteLine("хай");
-
-                            seats.Remove(repeatingString);
-                        }
+                        repeatingString = seats[i];
+                        Console.WriteLine(count);
                     }
-                }
-            }   
-            
-            
-            
-            //for (int i = 0; i < seats.Count; i++)
-           // {
-           //    for (int j = 0; j < seats.Count; j++)
-           //     {
-
-           //         if (seats[i] == seats[j])
-           //         {
-           //             repeatingString = seats[i];
-           //             count++;
-           //             if (count > 1)
-           //             {
-           //                 //repeatingString = seats[i];
-           //                 Console.WriteLine("хай");
-
-           //                 // seats.Remove(repeatingString);
-           //             }
-           //         }
                     
-           //     }
-           // }
+                    //repeatingElement = i;
+                    //Console.WriteLine(repeatingElement);
+                }
+                //count++;
+                //Console.WriteLine(count);
+
+            }
+
+
+
+            //for (int i = 0; i < seats.Count; i++)
+            //{
+            //    for (int j = 0; j < seats.Count; j++)
+            //    {
+
+            //        if (seats[i] == seats[j])
+            //        {
+            //            repeatingString = seats[i];
+            //            count++;
+            //            if (count > 1)
+            //            {
+            //                //repeatingString = seats[i];
+            //                Console.WriteLine("хай");
+
+            //                // seats.Remove(repeatingString);
+            //            }
+            //        }
+
+            //    }
+            //}
 
             //for (int i = 0; i < chairs.Length; i++)
             //{
@@ -93,10 +93,14 @@ namespace CSLight
             for (int i = 0; i < seats.Count; i++)
             {
                 Console.WriteLine(seats[i]);
+
             }
         }
     }
-}
+} 
+
+
+
 
 
 
