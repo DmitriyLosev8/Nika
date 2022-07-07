@@ -4,33 +4,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSLight    
+namespace CSLight
 {
     internal class Program
     {
         static void Main(string[] args)
-        {      //Задание: очередь в магазине:    
+        {      //Задание: объединение в одну коллекцию:    
 
-            Queue<int> queueToStore = new Queue<int>();
-            queueToStore.Enqueue(50);
-            queueToStore.Enqueue(80);
-            queueToStore.Enqueue(45);
-            queueToStore.Enqueue(36);
-            queueToStore.Enqueue(67);
-            queueToStore.Enqueue(90);
-            queueToStore.Enqueue(250);
+            string[] chairs = { "1", "2", "3", "7", "10", "45" };
+            string[] armchairs = { "4", "3", "5", "10", "18" };
+            List<string> seats = new List<string>();
+            seats.AddRange(chairs);
+            seats.AddRange(armchairs);
 
-            int amountOfPurchases = 0;
-            serviceOfClients(queueToStore, amountOfPurchases);
+            SearchAndDeleteRepeatingStrings(seats, chairs, armchairs);
+            ShowingAllUniqueSeats(seats);
         }
-        static void serviceOfClients(Queue<int> queueToStore,int amountOfPurchases)
+
+        static void SearchAndDeleteRepeatingStrings(List<string> seats, string[] chairs, string[] armchairs)
         {
-            foreach (var client in queueToStore)
+            string repeatingString;
+
+            for (int i = 0; i < chairs.Length; i++)
             {
-                amountOfPurchases += client;
-                Console.WriteLine("Текущая сумма покупок всех клиентов - " + amountOfPurchases + ", нажмите любою клавишу, чтобы обслужить следующего клиента:");
-                Console.ReadKey(true);
-                Console.Clear();
+                for (int j = 0; j < armchairs.Length; j++)
+                {
+                    if (chairs[i] == armchairs[j])
+                    {
+                        repeatingString = armchairs[j];
+                        seats.Remove(repeatingString);
+                    }
+                }
+            }
+        }
+
+        static void ShowingAllUniqueSeats(List<string> seats)
+        {
+            for (int i = 0; i < seats.Count; i++)
+            {
+                Console.WriteLine(seats[i]);
             }
         }
     }
