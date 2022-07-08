@@ -9,91 +9,75 @@ namespace CSLight
     internal class Program
     {
         static void Main(string[] args)
-        {      //Задание: объединение в одну коллекцию:  Доделать  
+        {      //Задание: кадровый учёт продвинутый:
 
-            string[] chairs = { "1", "2", "3", "7", "10", "45" };
-            string[] armchairs = { "4", "3", "5", "10", "18" };
-            List<string> seats = new List<string>();
-            seats.AddRange(chairs);
-            seats.AddRange(armchairs);
+            Dictionary<string, string> Dossiers = new Dictionary<string, string>();
+            bool isWorking = true;
+            string userInput;
 
-            SearchAndDeleteRepeatingStrings(seats, chairs, armchairs);
-            ShowingAllUniqueSeats(seats);
-        }
-
-        static void SearchAndDeleteRepeatingStrings(List<string> seats, string[] chairs, string[] armchairs)
-        {
-            string repeatingString;
-            int repeatingElement;
-
-            List<string> tempSeats =new List<string>();
-            tempSeats.AddRange(armchairs);
-            tempSeats.AddRange(chairs);
-
-            int count = 0;
-
-
-            for (int i = 0; i < seats.Count; i++)
+            while (isWorking)
             {
-                for (int j = 0; j < tempSeats.Count; j++)
+                Console.SetCursorPosition(45, 0);
+                Console.WriteLine("ПЕРЕД ВАМИ ПРОГРАММА КАДРОВОГО УЧЁТА");
+                Console.SetCursorPosition(0, 2);
+                Console.WriteLine("Нажмите 1, чтобы добавить досье\nНажмите 2, чтобы показать все досье\nНажмите 3, чтобы удалить какое-то досье\n" +
+                    "Нажмите 4, чтобы выйти\n\n");
+                userInput = Console.ReadLine();
+
+                switch (userInput)
                 {
-                    if (seats[i] == tempSeats[j])
-                    {
-                        count++;
-                        repeatingString = seats[i];
-                        Console.WriteLine(count);
-                    }
-                    
-                    //repeatingElement = i;
-                    //Console.WriteLine(repeatingElement);
+                    case "1":
+                        AddDossier(Dossiers);
+                        break;
+                    case "2":
+                        ShowDossier(Dossiers);
+                        break;
+                    case "3":
+                        DeleteDossier(Dossiers);
+                        break;
+                    case "4":
+                        isWorking = false;  
+                        break;
                 }
-                //count++;
-                //Console.WriteLine(count);
-
+                Console.ReadKey();
+                Console.Clear();
             }
-
-
-
-            //for (int i = 0; i < seats.Count; i++)
-            //{
-            //    for (int j = 0; j < seats.Count; j++)
-            //    {
-
-            //        if (seats[i] == seats[j])
-            //        {
-            //            repeatingString = seats[i];
-            //            count++;
-            //            if (count > 1)
-            //            {
-            //                //repeatingString = seats[i];
-            //                Console.WriteLine("хай");
-
-            //                // seats.Remove(repeatingString);
-            //            }
-            //        }
-
-            //    }
-            //}
-
-            //for (int i = 0; i < chairs.Length; i++)
-            //{
-            //    for (int j = 0; j < armchairs.Length; j++)
-            //    {
-            //        if (chairs[i] == armchairs[j])
-            //        {
-            //            repeatingString = armchairs[j]
-            //            seats.Remove(repeatingString);
-            //        }
-            //    }
-            //}
         }
 
-        static void ShowingAllUniqueSeats(List<string> seats)
+        static void AddDossier(Dictionary<string, string> Dossiers)
         {
-            for (int i = 0; i < seats.Count; i++)
-            {
-                Console.WriteLine(seats[i]);
+            string fullName;
+            string post;
+            Console.WriteLine("Введите ФИО:");
+            fullName = Console.ReadLine();
+            Console.WriteLine("Введите должность:");
+            post = Console.ReadLine();
 
+            Dossiers.Add(fullName, post);     
+        }
+
+        static void ShowDossier(Dictionary<string, string> Dossiers)
+        {
+            Console.WriteLine("Вот все досье:");
+            foreach (var dossier in Dossiers)
+            {
+                Console.Write($"{dossier.Key} - {dossier.Value}, ");
+            }
+        }
+
+        static void DeleteDossier(Dictionary<string, string> Dossiers)
+        {
+            string dosierToDelete;
+            Console.WriteLine("Введите ФИО человека, досье которого хотите удалить:");
+            dosierToDelete = Console.ReadLine();
+
+            if (Dossiers.ContainsKey(dosierToDelete))
+            {
+                Dossiers.Remove(dosierToDelete);
+            }
+            else
+            {
+                Console.WriteLine("Вы ввели неверные данные, попробуйте снова.");
             }
         }
     }
