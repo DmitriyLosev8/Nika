@@ -52,13 +52,15 @@ namespace CSLight
                     {
                         client.ShowCliensProducts();
                     }
-
+                    else
+                    {
+                        isWorking = false;
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Вы ввели не число");
                 }
-
                 Console.ReadKey();
                 Console.Clear();
             }
@@ -68,17 +70,11 @@ namespace CSLight
     class Client
     {
         private List<Product> _bag = new List<Product>();
-
-        public int Money { get; private set; }
-
-        public Client()
-        {
-            Money = 1000;
-        }
+        private int _money;
 
         public void Purchase(int productIndex, List<Product> Products)
         {
-            Money -= Products[productIndex].Price;
+            _money -= Products[productIndex].Price;
             _bag.Add(Products[productIndex]);
         }
 
@@ -90,16 +86,27 @@ namespace CSLight
             {
                 Console.Write(i + 1 + " ");
                 Console.WriteLine(_bag[i].Title + " стоит - " + _bag[i].Price);
+                Console.WriteLine("Денег у покупателя - " + _money);
             }
         }
+        
+        public Client()
+        {
+        _money = 1000;
+        }  
     }
 
     class Seller
     {
+        private int _money;
 
         public List<Product> Products { get; private set; } = new List<Product>();
 
-        private int _money; //{ get; private set; }
+        public Seller()
+        {
+            _money = 0;
+        }
+
         public void AddProduct()
         {
             Products.Add(new Product("Сахар", 50));
@@ -109,12 +116,6 @@ namespace CSLight
             Products.Add(new Product("Греча", 75));
         }
 
-
-        public Seller()
-        {
-            _money = 0;
-        }
-
         public void ShowAllProducts()
         {
             Console.WriteLine("Вот список всех товаров:\n");
@@ -122,17 +123,18 @@ namespace CSLight
             for (int i = 0; i < Products.Count; i++)
             {
                 Console.Write(i + 1 + " ");
-                Console.WriteLine(Products[i].Title + " стоит - " + Products[i].Price);
+                Console.WriteLine(Products[i].Title + " стоит - " + Products[i].Price);       
             }
+            Console.WriteLine("Денег в магазине - " + _money);
         }
 
         public void Sale(int productIndex)
         {
             _money += Products[productIndex].Price;
             Products.RemoveAt(productIndex);
-        }
-
+        } 
     }
+   
     class Product
     {
         public string Title { get; private set; }
