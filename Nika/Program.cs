@@ -10,262 +10,138 @@ namespace CSLight
     {
         static void Main(string[] args)
         {
-            //Задание: Гладиаторские бои:       
+            //Задание: Магазин:       
+            Seller seller = new Seller();
+            seller.AddProduct();
+            Client client = new Client();
+            bool isWorking = true;
 
-            Arena arena = new Arena();
-            arena.Fight();
-        }
-    }
-
-    class Arena
-    {
-        static bool readyToFight = true;
-
-        private Warrior[] warriors = { new Giant("Гигант", 10, 300, 50, readyToFight), new Knight("Рыцарь", 5, 200, 30, readyToFight), new Wizard("Волшебник", 5, 150, 30, readyToFight),
-            new Recruit("Рекрут",3,150,25,readyToFight), new Officer("Офицер", 7,300,50,readyToFight) };
-
-        public void ShowAllWarriors()
-        {
-            Console.WriteLine("Вот список всех бойцов:\n");
-
-            for (int i = 0; i < warriors.Length; i++)
+            while (isWorking)
             {
-                Console.Write(i + 1 + " ");
-                warriors[i].ShowIndicators();
-            }
-        }
-
-        public void Fight()
-        {
-            int stepOfFight = 0;
-            int leftWarriorIndex;
-            int rightWarriorIndex;
-            string userInput;
-            bool isSuccessfull;
-            Console.SetCursorPosition(45, 0);
-            Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ НА АРЕНУ:");
-            Console.SetCursorPosition(0, 2);
-            ShowAllWarriors();
-            Console.WriteLine("\nВыберете левого бойца:");
-            userInput = Console.ReadLine();
-            isSuccessfull = int.TryParse(userInput, out leftWarriorIndex);
-
-            if (isSuccessfull == true && leftWarriorIndex <= warriors.Length)
-            {
-                Console.WriteLine("\nВыберете правого бойца:");
+                bool isSuccessfull;
+                string userInput;
+                int inputedNumber;
+                Console.SetCursorPosition(45, 0);
+                Console.WriteLine("Добро пожаловать в магазин");
+                seller.ShowAllProducts();
+                Console.SetCursorPosition(45, 8);
+                Console.WriteLine("Чтобы купить товар, нажмите 1");
+                Console.SetCursorPosition(45, 9);
+                Console.WriteLine("Чтобы посмотреть купленные товары, нажмите 2");
                 userInput = Console.ReadLine();
-                isSuccessfull = int.TryParse(userInput, out rightWarriorIndex);
+                isSuccessfull = int.TryParse(userInput, out inputedNumber);
 
-                if (isSuccessfull == true && rightWarriorIndex <= warriors.Length && leftWarriorIndex != rightWarriorIndex)
+                if (isSuccessfull == true)
                 {
-                    Console.Clear();
-                    while (warriors[leftWarriorIndex - 1].Health > 0 && warriors[rightWarriorIndex - 1].Health > 0 && warriors[leftWarriorIndex - 1].ReadyToFight == true && warriors[rightWarriorIndex - 1].ReadyToFight == true)
+                    if (inputedNumber == 1)
                     {
-                        stepOfFight++;
-                        Console.SetCursorPosition(35, 0);
-                        Console.WriteLine("Идёт ожесточённая битва. Внимательно следите за жизнями бойцов");
-                        Console.SetCursorPosition(0, 2);
-                        Console.WriteLine("Боец слева:");
-                        Console.SetCursorPosition(55, 2);
-                        Console.WriteLine("Боец справа:");
-                        Console.SetCursorPosition(0, 5);
-                        warriors[leftWarriorIndex - 1].ShowIndicators();
-                        Console.SetCursorPosition(55, 5);
-                        warriors[rightWarriorIndex - 1].ShowIndicators();
-                        Console.SetCursorPosition(25, 7);
-                        Console.WriteLine("Применить способность у левого бойца и нанести урон или просто нанести урон?");
-                        Console.SetCursorPosition(35, 8);
-                        Console.WriteLine("д - Да, н - нет");
-
+                        Console.WriteLine("Введите название товара, который вы хотите купить");
                         userInput = Console.ReadLine();
-
-                        if (userInput == "д")
+                        
+                        for (int i = 0; i < seller.Products.Count; i++)
                         {
-                            warriors[leftWarriorIndex - 1].UniqueSkill(stepOfFight);
-                            warriors[rightWarriorIndex - 1].TakeDamage(warriors[leftWarriorIndex - 1].Damage);
+                            if (seller.Products[i].Title == userInput)
+                            {
+                                client.Purchase(i, seller.Products);
+                                seller.Sale(i);
+                            }
                         }
-                        else
-                        {
-                            warriors[rightWarriorIndex - 1].TakeDamage(warriors[leftWarriorIndex - 1].Damage);
-                        }
-
-                        Console.SetCursorPosition(25, 7);
-                        Console.WriteLine("Применить способность у правого бойца и нанести урон или просто нанести урон?");
-                        Console.SetCursorPosition(35, 8);
-                        Console.WriteLine("д - Да, н - нет");
-
-                        userInput = Console.ReadLine();
-
-                        if (userInput == "д")
-                        {
-                            Console.SetCursorPosition(55, 10);
-                            warriors[rightWarriorIndex - 1].UniqueSkill(stepOfFight);
-                            warriors[leftWarriorIndex - 1].TakeDamage(warriors[rightWarriorIndex - 1].Damage);
-                        }
-                        else
-                        {
-                            warriors[leftWarriorIndex - 1].TakeDamage(warriors[rightWarriorIndex - 1].Damage);
-                        }
-
-                        Console.ReadKey();
-                        Console.Clear();
                     }
+
+                    if (inputedNumber == 2)
+                    {
+                        client.ShowCliensProducts();
+                    }
+
                 }
                 else
                 {
-                    Console.WriteLine("Вы ввели не число или бойца под таким номером нет/его уже выбрали");
+                    Console.WriteLine("Вы ввели не число");
                 }
-            }
-            else
-            {
-                Console.WriteLine("Вы ввели не число или бойца под таким номером нет");
-            }
-        }
-    }
 
-    class Warrior
-    {
-        protected string Name;
-        protected int Armor;
-
-        public bool ReadyToFight { get; protected set; }
-        public int Health { get; protected set; }
-        public int Damage { get; protected set; }
-        public int UniqueFeature { get; protected set; }
-
-        public void ShowIndicators()
-        {
-            Console.WriteLine($"{Name}, {Damage} - урона. Жизней - {Health}, брони - {Armor}");
-        }
-
-        public virtual void UniqueSkill(int uniqueInfo)
-        {
-
-        }
-
-        public void TakeDamage(int damage)
-        {
-            Health -= damage - Armor;
-        }
-    }
-
-    class Giant : Warrior
-    {
-        public Giant(string name, int armor, int health, int damage, bool readyToFight)
-        {
-            Name = name;
-            Armor = armor;
-            Health = health;
-            Damage = damage;
-            ReadyToFight = true;
-        }
-
-        public override void UniqueSkill(int stepOfFight)
-        {
-            int coolDown = 6;
-            Console.WriteLine("SuperHit + 30 к урону");
-
-            if (stepOfFight % coolDown == 0)
-            {
-                Damage += 30;
+                Console.ReadKey();
+                Console.Clear();
             }
         }
     }
 
-    class Knight : Warrior
+    class Client
     {
-        public Knight(string name, int armor, int health, int damage, bool readyToFight) 
+        private List<Product> _bag = new List<Product>();
+
+        public int Money { get; private set; }
+
+        public Client()
         {
-            Name = name;
-            Armor = armor;
-            Health = health;
-            Damage = damage;
-            ReadyToFight = true;
+            Money = 1000;
         }
 
-        public override void UniqueSkill(int stepOfFight)
+        public void Purchase(int productIndex, List<Product> Products)
         {
-            Console.WriteLine("ExtraDamage - 20% вероятность увеличить урон на 15");
-            int lowerBorder = 0;
-            int upperBorder = 5;
-            int possibility = 1;
-            Random random = new Random();
-            int chance = random.Next(lowerBorder, upperBorder);
+            Money -= Products[productIndex].Price;
+            _bag.Add(Products[productIndex]);
+        }
 
-            if (chance == possibility)
+        public void ShowCliensProducts()
+        {
+            Console.WriteLine("Вот список всех купленных товаров:\n");
+
+            for (int i = 0; i < _bag.Count; i++)
             {
-                Damage += 15;
+                Console.Write(i + 1 + " ");
+                Console.WriteLine(_bag[i].Title + " стоит - " + _bag[i].Price);
             }
         }
     }
 
-    class Wizard : Warrior
+    class Seller
     {
-        public Wizard(string name, int armor, int health, int damage, bool readyToFight) 
+
+        public List<Product> Products { get; private set; } = new List<Product>();
+
+        private int _money; //{ get; private set; }
+        public void AddProduct()
         {
-            Name = name;
-            Armor = armor;
-            Health = health;
-            Damage = damage;
-            ReadyToFight = true;
-            UniqueFeature = 100;
+            Products.Add(new Product("Сахар", 50));
+            Products.Add(new Product("Масло", 70));
+            Products.Add(new Product("Мука", 40));
+            Products.Add(new Product("Соль", 20));
+            Products.Add(new Product("Греча", 75));
         }
 
-        public override void UniqueSkill(int stepOfFight)
-        {
-            int priceOfAplly = 25;
 
-            if (UniqueFeature >= priceOfAplly)
+        public Seller()
+        {
+            _money = 0;
+        }
+
+        public void ShowAllProducts()
+        {
+            Console.WriteLine("Вот список всех товаров:\n");
+
+            for (int i = 0; i < Products.Count; i++)
             {
-                Console.WriteLine("GetExtraHealth - жизни + 20");
-                UniqueFeature -= priceOfAplly;
-                Health += 20;
-            }
-            else
-            {
-                Console.WriteLine("Недостаточно маны");
+                Console.Write(i + 1 + " ");
+                Console.WriteLine(Products[i].Title + " стоит - " + Products[i].Price);
             }
         }
+
+        public void Sale(int productIndex)
+        {
+            _money += Products[productIndex].Price;
+            Products.RemoveAt(productIndex);
+        }
+
     }
-
-    class Recruit : Warrior
+    class Product
     {
-        public Recruit(string name, int armor, int health, int damage, bool readyToFight) 
-        {
-            Name = name;
-            Armor = armor;
-            Health = health;
-            Damage = damage;
-            ReadyToFight = true;
-        }
+        public string Title { get; private set; }
+        public int Price { get; private set; }
 
-        public override void UniqueSkill(int stepOfFight)
+        public Product(string title, int price)
         {
-            Console.WriteLine("GiveUp - боец сдался");
-            ReadyToFight = false;
-        }
-    }
-
-    class Officer : Warrior
-    {
-        public Officer(string name, int armor, int health, int damage, bool readyToFight) 
-        {
-            Name = name;
-            Armor = armor;
-            Health = health;
-            Damage = damage;
-            ReadyToFight = true;
-        }
-
-        public override void UniqueSkill(int stepOfFight)
-        {
-            int coolDown = 8;
-
-            if (stepOfFight % coolDown == 0)
-            {
-                Console.WriteLine("DoubleDamage - двойной урон");
-                Damage *= 2;
-            }
+            Title = title;
+            Price = price;
         }
     }
 }
