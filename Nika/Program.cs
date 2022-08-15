@@ -77,17 +77,17 @@ namespace CSLight
             }
         }
        
-        public void SellProducts()
+        private void SellProducts()
         {
             _money += _purchaseAmount;
         }
 
-        public void ReturnProduct(Client client)
+        private void ReturnProduct(Client client)
         {
             _shelves.Add(client.ProductToReturn);
         }
 
-        public void CalculatePurchase(Client client)
+        private void CalculatePurchase(Client client)
         {
             for (int i = 0; i < client.Busket.Count; i++)
             {
@@ -95,8 +95,8 @@ namespace CSLight
             }
             Console.WriteLine("Сумма покупки - " + _purchaseAmount);
         }
-       
-        public void ShowInfo(int numberOfClient)
+
+        private void ShowInfo(int numberOfClient)
         {
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("На кассе клиент номер - " + numberOfClient);
