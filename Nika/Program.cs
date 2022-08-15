@@ -10,42 +10,10 @@ namespace CSLight
     {
         static void Main(string[] args)
         {
-            //Задание: Супермаркет:    ОЧЕРЕДЬ
+            //Задание: Супермаркет:    
 
             Supermarket supermarket = new Supermarket();
-
-            //supermarket.Test();
-
-           // supermarket.Work();
-
-            //for (int i = 0; i < supermarket._clients.Count; i++)
-            //{
-            //    Console.WriteLine(supermarket._clients[i].
-            //}
-
-            //foreach (var client in supermarket._clients)
-            //{
-            //    Console.WriteLine(client._money);
-            //}
-
-            Queue<string> products = new Queue<string>();
-            products.Enqueue("Молоко");
-            products.Enqueue("Сахар");
-            products.Enqueue("Хлеб");
-            products.Enqueue("Пиво");
-            products.Enqueue("Пельмени");
-            products.Enqueue("Мясо");
-
-            foreach(var product in products)
-            {
-                Console.WriteLine(product);
-                products.Dequeue();
-            }
-
-
-
-
-
+            supermarket.Work();
         }
     }
 
@@ -57,71 +25,83 @@ namespace CSLight
         private int _money = 5000;
         private int _purchaseAmount = 0;
         private List<Product> _shelves = new List<Product>();
-        private Queue<Client> _clients = new Queue<Client>();
+        private List<Client> _clients = new List<Client>();
 
-        //CalculatePurchase
-
-        public void Work()  //Product[] productsToCashier   
+        public void Work()  
         {
             AddProducts();
             AddClients();
             TakeOfProducts();
+            int numberOfClient = 1;
 
-            foreach (var client in _clients)
-            {
-                
-                int numberOfClient = 1;
-                client.ShowInfo();
-                ShowInfo();
-                Console.WriteLine("На кассе клиент номер - " + numberOfClient);
+            for (int i = 0;i < _clients.Count; i++)
+            {           
+                ShowInfo(numberOfClient);
+                _clients[i].TakePurchaseAmount();
+                _clients[i].ShowInfo();
+                CalculatePurchase(_clients[i]);
+                _clients[i].ChekCountOfMoney(_purchaseAmount);
 
-                for (int i = 0; i < client.Busket.Count; i++)
+                if (_clients[i].IsEnoughMoney == true)
                 {
-                    _purchaseAmount += client.Busket[i].Price;
-                }
-                Console.WriteLine("Сумма покупки - " + _purchaseAmount);
-                client.ChekCountOfMoney(_purchaseAmount);
-
-                if (client.IsEnoughMoney == true)
-                {
-                    client.BuyProdutc(_purchaseAmount);
+                    _clients[i].BuyProdutcs(_purchaseAmount);
+                    SellProducts();
+                    Console.WriteLine("Покупка пройдёт успешно");
+                    _purchaseAmount = 0;
                 }
                 else
                 {
-                    while (client.IsEnoughMoney == false)
+                    int countOfProduct = 0;
+                    Console.WriteLine("Денег не достаточно. Нажмите Enter, чтобы удалить случайный товар(ы) из корзины пока денег не будет достаточно.");
+                    Console.ReadKey();
+                   
+                    while (_clients[i].IsEnoughMoney == false)
                     {
-                        client.DeleteProduct();
-                        client.ChekCountOfMoney(_purchaseAmount);
+                        countOfProduct++;
+                        _purchaseAmount = 0;
+                        _clients[i].DeleteProduct();
+                        ReturnProduct(_clients[i]);
+                        CalculatePurchase(_clients[i]);
+                        _clients[i].ChekCountOfMoney(_purchaseAmount);
                     }
-                    client.BuyProdutc(_purchaseAmount);
+                    _clients[i].BuyProdutcs(_purchaseAmount);
+                    SellProducts();
+                    Console.WriteLine("Покупка пройдёт успешно, но пришлось вытащить из корзины " + countOfProduct + " продуктов.");
+                    _purchaseAmount = 0;
                 }
+                _clients.RemoveAt(i);
+                i--;
                 numberOfClient++;
-                _clients.Dequeue();
                 Console.ReadKey();
                 Console.Clear();
             }
         }
-        public void ShowInfo()
+       
+        public void SellProducts()
         {
-            Console.SetCursorPosition(45, 3);
-            Console.WriteLine("Денег в супермаркете - " + _money);
+            _money += _purchaseAmount;
         }
 
-        public void Test()
+        public void ReturnProduct(Client client)
         {
-            AddProducts();
-            AddClients();
-            TakeOfProducts();
-            foreach (var client in _clients)
+            _shelves.Add(client.ProductToReturn);
+        }
+
+        public void CalculatePurchase(Client client)
+        {
+            for (int i = 0; i < client.Busket.Count; i++)
             {
-                for (int i = 0; i < client.Busket.Count; i++)
-                {
-                    Console.WriteLine($"Продукт - {client.Busket[i].Title}, его цена - {client.Busket[i].Price}");
-                }
-                Console.WriteLine("\n\n");    
-
+                _purchaseAmount += client.Busket[i].Price;
             }
-
+            Console.WriteLine("Сумма покупки - " + _purchaseAmount);
+        }
+       
+        public void ShowInfo(int numberOfClient)
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("На кассе клиент номер - " + numberOfClient);
+            Console.SetCursorPosition(45, 1);
+            Console.WriteLine("Денег в супермаркете - " + _money);
         }
 
         private void TakeOfProducts()
@@ -129,10 +109,12 @@ namespace CSLight
             foreach (var client in _clients)
             {
                 for (int i = 0; i < client.NecessaryProducts; i++)
-                {
+                { 
                     Random random = new Random();
-                    Product productToTakeOf = _shelves[random.Next(_shelves.Count)];
+                    int indexOfProduct = random.Next(_shelves.Count);
+                    Product productToTakeOf = _shelves[indexOfProduct];
                     client.PutProducToGroceryBusket(productToTakeOf);
+                    _shelves.RemoveAt(indexOfProduct);
                     System.Threading.Thread.Sleep(50);
                 }
             }
@@ -142,7 +124,7 @@ namespace CSLight
         {
             for (int i = 0; i < _countOfCliensPerDay; i++)
             {
-                _clients.Enqueue(new Client());
+                _clients.Add(new Client());
             }
         }
 
@@ -167,42 +149,45 @@ namespace CSLight
 
     class Client
     {
-        private int _money = 1500;
+        private int _money;
         private List<Product> _groceryBusket = new List<Product>();
 
         public IReadOnlyList<Product> Busket;
 
-
         public Product ProductToPut { get; private set; }
-        public int NecessaryProducts { get; private set; } = 5;
-
-
-
+        public Product ProductToReturn { get; private set; }
+        public int NecessaryProducts { get; private set; } = 8;
         public bool IsEnoughMoney { get; private set; }
+
+        public Client()
+        {
+            int minimalNumberOfMoney = 1000;
+            int maximumNumberOfMoney = 2000;
+            Random random = new Random();
+            _money = random.Next(minimalNumberOfMoney, maximumNumberOfMoney);
+        }
 
         public void PutProducToGroceryBusket(Product productToPut)
         {
-
             ProductToPut = productToPut;
-            _groceryBusket.Add(productToPut);
+            _groceryBusket.Add(productToPut);     
+        }
+
+        public void TakePurchaseAmount()
+        {
             Busket = _groceryBusket;
         }
 
         public void ShowInfo()
         {
             Console.SetCursorPosition(45, 0);
-            Console.WriteLine("Денег у клиента - " + _money);
+            Console.WriteLine("Денег у клиента - " + _money);    
         }
-
-        public void BuyProdutc(int purchaseAmount)
+        
+        public void BuyProdutcs(int purchaseAmount)
         {
             _money -= purchaseAmount;
         }
-
-        //public void PutProductsToCashier()
-        //{
-        //    Busket = _groceryBusket;
-        //}
 
         public void ChekCountOfMoney(int purchaseAmount)
         {
@@ -212,16 +197,17 @@ namespace CSLight
             }
             else
             {
-                IsEnoughMoney = false;
-                Console.WriteLine("Денег не достаточно. Из корзины будет удалён случайный товар(ы) пока денег не станет достаточно.");
+                IsEnoughMoney = false; 
             }
-
         }
 
         public void DeleteProduct()
         {
             Random random = new Random();
-            _groceryBusket.RemoveAt(random.Next(_groceryBusket.Count));
+            int indexOfProduct = random.Next(_groceryBusket.Count);
+            ProductToReturn = _groceryBusket[indexOfProduct];
+            _groceryBusket.RemoveAt(indexOfProduct);
+            TakePurchaseAmount();
         }
     }
 
