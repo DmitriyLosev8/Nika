@@ -10,218 +10,273 @@ namespace CSLight
     {
         static void Main(string[] args)
         {
-            //Задание: Супермаркет:    
+            //Задание: Война:                 ДОДЕЛАТЬ
 
-            Supermarket supermarket = new Supermarket();
-            supermarket.Work();
+            //RightLand rightLand = new RightLand();
+            //rightLand.PrepareFoFight();
+            //rightLand.ShowInfo();
+            //LeftLand leftLand = new LeftLand();
+            //leftLand.PrepareFoFight();
+            //leftLand.ShowInfo();
+            Arena arena = new Arena();
+            arena.BeginFight();
         }
     }
 
-    class Supermarket
+    class Arena
     {
-        private int _countOfCliensPerDay = 15;
-        private int _countOfProductsPerDay = 500;
-        private int _money = 5000;
-        private List<Product> _shelves = new List<Product>();
-        private List<Client> _clients = new List<Client>();
-
-        public void Work()
+       private LeftLand _leftLand = new LeftLand();  
+       private RightLand _rightLand = new RightLand();
+        
+       public void BeginFight()
         {
-            AddProducts();
-            AddClients();
-            PrepareProductsForSale();
-            int numberOfClient = 1;
-            int purchaseAmount = 0;
+            _leftLand.PrepareFoFight();
+            _rightLand.PrepareFoFight();
 
-            while (_clients.Count > 0)
+            while (_leftLand.IsAnyWarriorAlive == true && _rightLand.IsAnyWarriorAlive == true)
             {
-                Client clientToServe = _clients[0]; 
-                ShowInfo(numberOfClient);
-                clientToServe.TakePurchaseAmount();
-                clientToServe.ShowInfo();
-                purchaseAmount = CalculatePurchase(clientToServe, purchaseAmount);
-                clientToServe.CompareMoneyWithPurchaseAmount(purchaseAmount);
+                Console.SetCursorPosition(25, 0);
+                Console.WriteLine("Перед вами арена, где сражаются взводы войнов Леволандии и Праволандии");
+                _leftLand.ShowInfo();
+                _rightLand.ShowInfo();
+                Console.SetCursorPosition(25, 20);
+                //Console.WriteLine("Нажмите Enter, чтобы начать бой");
+                //Console.ReadKey();
+                
+            }
+        }
 
-                if (clientToServe.IsEnoughMoney)
+        private void Fight()
+        {
+            _leftLand.DiagnoseWarriors();
+            _rightLand.DiagnoseWarriors();
+            int indexOfLeftWarrior;
+            int indexOfRightWarrior;
+            Random random = new Random();
+            indexOfLeftWarrior = random.Next(_leftLand.PlatoonToFight.Count);
+            indexOfRightWarrior = random.Next(_rightLand.PlatoonToFight.Count);
+   
+        }
+    }
+
+   
+
+    class Country
+    {
+        protected List<Warrior> Platoon = new List<Warrior>();
+        protected int CountOfWarriors;
+        protected int ChanceToHirefRecruit;
+        protected int ChanceToHireInfantryman;
+        protected int ChanceToHireOfficer;
+        
+
+        public IReadOnlyList<Warrior> PlatoonToFight { get; protected set; }
+        public bool IsAnyWarriorAlive { get; protected set; }
+
+       
+        public Country()
+        {       
+            IsAnyWarriorAlive = true;
+        }
+
+        public void PrepareFoFight()
+        {
+            int minimalNumberOfWarriors = 10;
+            int maximalNumberOfWarriors = 16;
+            int countOfRecruits;
+            int countOfInfantryman;
+            int countOfOfficers;
+            Random random = new Random();
+            CountOfWarriors = random.Next(minimalNumberOfWarriors, maximalNumberOfWarriors);
+            countOfRecruits = CountOfWarriors / ChanceToHirefRecruit;
+            countOfInfantryman = CountOfWarriors / ChanceToHireInfantryman;
+            countOfOfficers = CountOfWarriors / ChanceToHireOfficer;
+            AddWarriors(new Recruit(), countOfRecruits);
+            AddWarriors(new Infantryman(), countOfInfantryman);
+            AddWarriors(new Officer(), countOfOfficers);
+            PlatoonToFight = Platoon;
+        }
+
+
+        protected void AddWarriors(Warrior warrior, int countOfNewWarriors)
+        {
+            for (int i = 0; i < countOfNewWarriors; i++)
+            {
+                Platoon.Add(warrior);
+            }
+
+        }
+
+        //protected void AddWarriors(int countOfRecruits, int countOfInfantryman, int countOfOfficers)
+        //{
+        //    for (int i = 0; i < countOfRecruits; i++)
+        //    {
+        //        Platoon.Add(new Recruit());
+        //    }
+
+        //    for (int i = 0; i < countOfInfantryman; i++)
+        //    {
+        //        Platoon.Add(new Infantryman());
+        //    }
+
+        //    for (int i = 0; i < countOfOfficers; i++)
+        //    {
+        //        Platoon.Add(new Officer());
+        //    }
+        //}
+
+        public void DiagnoseWarriors()
+        {
+            for (int i = 0; i < PlatoonToFight.Count; i++)
+            {
+                if (PlatoonToFight[i].Health > 0)
                 {
-                    clientToServe.BuyProdutcs(purchaseAmount);
-                    SellProducts(purchaseAmount);
-                    Console.WriteLine("Покупка пройдёт успешно");
-                    purchaseAmount = 0;
+                    IsAnyWarriorAlive = true;
                 }
                 else
                 {
-                    int countOfProduct = 0;
-                    Console.WriteLine("Денег не достаточно. Нажмите Enter, чтобы удалить случайный товар(ы) из корзины пока денег не будет достаточно.");
-                    Console.ReadKey();
-
-                    while (clientToServe.IsEnoughMoney == false)
-                    {
-                        countOfProduct++;
-                        purchaseAmount = 0;
-                        clientToServe.DeleteProduct();
-                        ReturnProduct(clientToServe);  
-                        purchaseAmount = CalculatePurchase(clientToServe, purchaseAmount);
-                        clientToServe.CompareMoneyWithPurchaseAmount(purchaseAmount);
-                    }
-
-                    clientToServe.BuyProdutcs(purchaseAmount);
-                    SellProducts(purchaseAmount);
-                    Console.WriteLine("Покупка пройдёт успешно, но пришлось вытащить из корзины " + countOfProduct + " продуктов.");
-                    purchaseAmount = 0;
-                }
-
-                _clients.RemoveAt(0);
-                numberOfClient++;
-                Console.ReadKey();
-                Console.Clear();
-            }
-        }
-
-        private void SellProducts(int purchaseAmount)
-        {
-            _money += purchaseAmount;
-        }
-
-        private void ReturnProduct(Client client)
-        {
-            _shelves.Add(client.ProductToReturn);
-        }
-
-        private int CalculatePurchase(Client client, int purchaseAmount)
-        {
-            for (int i = 0; i < client.Busket.Count; i++)
-            {
-                purchaseAmount += client.Busket[i].Price;
-            }
-
-            Console.WriteLine("Сумма покупки - " + purchaseAmount);
-            return purchaseAmount;
-        }
-
-        private void ShowInfo(int numberOfClient)
-        {
-            Console.SetCursorPosition(0, 0);
-            Console.WriteLine("На кассе клиент номер - " + numberOfClient);
-            Console.SetCursorPosition(45, 1);
-            Console.WriteLine("Денег в супермаркете - " + _money);
-        }
-
-        private void PrepareProductsForSale()
-        {
-            foreach (var client in _clients)
-            {
-                for (int i = 0; i < client.NecessaryProducts; i++)
-                {
-                    if (client.NecessaryProducts <= _shelves.Count)
-                    {
-                        Random random = new Random();
-                        int indexOfProduct = random.Next(_shelves.Count);
-                        Product productToTakeOf = _shelves[indexOfProduct];
-                        client.PutProducToGroceryBusket(productToTakeOf);
-                        _shelves.RemoveAt(indexOfProduct);
-                        System.Threading.Thread.Sleep(50);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Продукты закончились, приходите завтра");
-                    }   
+                    Console.WriteLine("Все войны этого взвода погибли");
+                    IsAnyWarriorAlive = false;
                 }
             }
         }
 
-        private void AddClients()
+        public virtual void ShowInfo()
         {
-            for (int i = 0; i < _countOfCliensPerDay; i++)
+            for (int i = 0; i < PlatoonToFight.Count; i++)
             {
-                _clients.Add(new Client());
+                Console.Write(i + 1 + " - ");
+                PlatoonToFight[i].ShowIndicators();
             }
         }
 
-        private void AddProducts()
-        {
-            string[] titlesOfProducts = { "Морковь", "Картофель", "Лук", "Сахар", "Яйца", "Хлеб", "Свинина", "Курица", "Пельмени", "Колбаса" };
-            int indexOfProduct;
-            string titleOfProduct;
-            int priceOfProduct;
-            int[] pricesOfProduts = { 50, 70, 40, 75, 65, 30, 320, 280, 380, 450 };
-            Random random = new Random();
+       
+    }
 
-            for (int i = 0; i < _countOfProductsPerDay; i++)
+    
+    class LeftLand : Country
+    {
+        public LeftLand() : base()
+        {
+            ChanceToHirefRecruit = 5;
+            ChanceToHireInfantryman = 2;
+            ChanceToHireOfficer = 3;
+           // AddWarriors();
+        }
+
+        public override void ShowInfo()
+        {
+            Console.SetCursorPosition(0, 5);
+            Console.WriteLine("Леволандия:");
+            base.ShowInfo();
+        }
+    }
+
+    class RightLand : Country
+    {
+        public RightLand() : base()
+        {
+            ChanceToHirefRecruit = 4;
+            ChanceToHireInfantryman = 2;
+            ChanceToHireOfficer = 4;
+            
+            //AddWarriors();
+        }
+
+        public override void ShowInfo()
+        {
+            int leftIndent = 50;
+            int topIndent = 5;
+            Console.SetCursorPosition(leftIndent, topIndent);
+            Console.WriteLine("Праволандия:");
+            
+            for (int i = 0; i < PlatoonToFight.Count; i++)
             {
-                indexOfProduct = random.Next(titlesOfProducts.Length);
-                titleOfProduct = titlesOfProducts[indexOfProduct];
-                priceOfProduct = pricesOfProduts[indexOfProduct];
-                _shelves.Add(new Product(titleOfProduct, priceOfProduct));
+                topIndent++;
+                Console.SetCursorPosition(leftIndent, topIndent);
+                Console.Write(i + 1 + " - ");
+                PlatoonToFight[i].ShowIndicators();
+            }    
+        }
+    }
+
+    class Warrior
+    {
+        protected int Damage;
+       
+        public int Health { get; protected set; }
+        public int Armor { get; protected set; }
+        
+        public virtual void UniqueSkill(int stepOfFigth) { }
+
+        public void ShowIndicators()
+        {
+            Console.WriteLine($"Жизни - {Health}, броня - {Armor}");
+        }
+
+        public void TakeDamage(int damage)
+        {
+            Health -= damage - Armor;
+        }
+    }
+
+    
+    class Recruit : Warrior
+    {
+        public Recruit()
+        {
+            Health = 100;
+            Armor = 25;
+            Damage = 10;
+        }
+
+        public override void UniqueSkill(int stepOfFigth)
+        {
+            int coolDown = 3;
+
+            if (stepOfFigth % coolDown == 0)
+            {
+                Health += 15;
+            }
+        }
+    }
+    class Infantryman : Warrior
+    {
+        public Infantryman()
+        {
+            Health = 150;
+            Armor = 50;
+            Damage = 15;
+        }
+
+        public override void UniqueSkill(int stepOfFigth)
+        {
+            int coolDown = 4;
+            
+            if (stepOfFigth % coolDown == 0)
+            {
+                Armor += 8;
             }
         }
     }
 
-    class Client
+    class Officer : Warrior
     {
-        private int _money;
-        private List<Product> _groceryBusket = new List<Product>();
-
-        public IReadOnlyList<Product> Busket { get; private set; }
-        public Product ProductToPut { get; private set; }
-        public Product ProductToReturn { get; private set; }
-        public int NecessaryProducts { get; private set; } = 8;
-        public bool IsEnoughMoney { get; private set; }
-
-        public Client()
+        public Officer()
         {
-            int minimalNumberOfMoney = 1000;
-            int maximumNumberOfMoney = 2000;
-            Random random = new Random();
-            _money = random.Next(minimalNumberOfMoney, maximumNumberOfMoney);
+            Health = 200;
+            Armor = 75;
+            Damage = 20;
         }
 
-        public void PutProducToGroceryBusket(Product productToPut)
+        public override void UniqueSkill(int stepOfFigth)
         {
-            ProductToPut = productToPut;
-            _groceryBusket.Add(productToPut);
-        }
+            int coolDown = 5;
 
-        public void TakePurchaseAmount()
-        {
-            Busket = _groceryBusket;
-        }
-
-        public void ShowInfo()
-        {
-            Console.SetCursorPosition(45, 0);
-            Console.WriteLine("Денег у клиента - " + _money);
-        }
-
-        public void BuyProdutcs(int purchaseAmount)
-        {
-            _money -= purchaseAmount;
-        }
-
-        public void CompareMoneyWithPurchaseAmount(int purchaseAmount)
-        {
-            IsEnoughMoney = _money >= purchaseAmount;
-        }
-
-        public void DeleteProduct()
-        {
-            Random random = new Random();
-            int indexOfProduct = random.Next(_groceryBusket.Count);
-            ProductToReturn = _groceryBusket[indexOfProduct];
-            _groceryBusket.RemoveAt(indexOfProduct);
-            TakePurchaseAmount();
-        }
-    }
-
-    class Product
-    {
-        public string Title { get; private set; }
-        public int Price { get; private set; }
-
-        public Product(string title, int price)
-        {
-            Title = title;
-            Price = price;
+            if (stepOfFigth % coolDown == 0)
+            {
+                Damage += 5;
+            }
         }
     }
 }
