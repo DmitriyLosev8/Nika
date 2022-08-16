@@ -17,69 +17,70 @@ namespace CSLight
         }
     }
 
-
     class Supermarket
     {
         private int _countOfCliensPerDay = 15;
         private int _countOfProductsPerDay = 500;
         private int _money = 5000;
-        private int _purchaseAmount = 0;
         private List<Product> _shelves = new List<Product>();
         private List<Client> _clients = new List<Client>();
 
-        public void Work()  
+        public void Work()
         {
             AddProducts();
             AddClients();
-            TakeOfProducts();
+            PrepareProductsForSale();
             int numberOfClient = 1;
+            int purchaseAmount = 0;
 
-            for (int i = 0;i < _clients.Count; i++)
-            {           
+            while (_clients.Count > 0)
+            {
+                Client clientToServe = _clients[0]; 
                 ShowInfo(numberOfClient);
-                _clients[i].TakePurchaseAmount();
-                _clients[i].ShowInfo();
-                CalculatePurchase(_clients[i]);
-                _clients[i].ChekCountOfMoney(_purchaseAmount);
+                clientToServe.TakePurchaseAmount();
+                clientToServe.ShowInfo();
+                purchaseAmount = CalculatePurchase(clientToServe, purchaseAmount);
+                clientToServe.CompareMoneyWithPurchaseAmount(purchaseAmount);
 
-                if (_clients[i].IsEnoughMoney == true)
+                if (clientToServe.IsEnoughMoney)
                 {
-                    _clients[i].BuyProdutcs(_purchaseAmount);
-                    SellProducts();
+                    clientToServe.BuyProdutcs(purchaseAmount);
+                    SellProducts(purchaseAmount);
                     Console.WriteLine("Покупка пройдёт успешно");
-                    _purchaseAmount = 0;
+                    purchaseAmount = 0;
                 }
                 else
                 {
                     int countOfProduct = 0;
                     Console.WriteLine("Денег не достаточно. Нажмите Enter, чтобы удалить случайный товар(ы) из корзины пока денег не будет достаточно.");
                     Console.ReadKey();
-                   
-                    while (_clients[i].IsEnoughMoney == false)
+
+                    while (clientToServe.IsEnoughMoney == false)
                     {
                         countOfProduct++;
-                        _purchaseAmount = 0;
-                        _clients[i].DeleteProduct();
-                        ReturnProduct(_clients[i]);
-                        CalculatePurchase(_clients[i]);
-                        _clients[i].ChekCountOfMoney(_purchaseAmount);
+                        purchaseAmount = 0;
+                        clientToServe.DeleteProduct();
+                        ReturnProduct(clientToServe);  
+                        purchaseAmount = CalculatePurchase(clientToServe, purchaseAmount);
+                        clientToServe.CompareMoneyWithPurchaseAmount(purchaseAmount);
                     }
-                    _clients[i].BuyProdutcs(_purchaseAmount);
-                    SellProducts();
+
+                    clientToServe.BuyProdutcs(purchaseAmount);
+                    SellProducts(purchaseAmount);
                     Console.WriteLine("Покупка пройдёт успешно, но пришлось вытащить из корзины " + countOfProduct + " продуктов.");
-                    _purchaseAmount = 0;
+                    purchaseAmount = 0;
                 }
-                _clients.RemoveAt(i);
-                i--;
+
+                _clients.RemoveAt(0);
                 numberOfClient++;
                 Console.ReadKey();
                 Console.Clear();
             }
         }
-       
-        private void SellProducts()
+
+        private void SellProducts(int purchaseAmount)
         {
-            _money += _purchaseAmount;
+            _money += purchaseAmount;
         }
 
         private void ReturnProduct(Client client)
@@ -87,13 +88,15 @@ namespace CSLight
             _shelves.Add(client.ProductToReturn);
         }
 
-        private void CalculatePurchase(Client client)
+        private int CalculatePurchase(Client client, int purchaseAmount)
         {
             for (int i = 0; i < client.Busket.Count; i++)
             {
-                _purchaseAmount += client.Busket[i].Price;
+                purchaseAmount += client.Busket[i].Price;
             }
-            Console.WriteLine("Сумма покупки - " + _purchaseAmount);
+
+            Console.WriteLine("Сумма покупки - " + purchaseAmount);
+            return purchaseAmount;
         }
 
         private void ShowInfo(int numberOfClient)
@@ -104,18 +107,25 @@ namespace CSLight
             Console.WriteLine("Денег в супермаркете - " + _money);
         }
 
-        private void TakeOfProducts()
+        private void PrepareProductsForSale()
         {
             foreach (var client in _clients)
             {
                 for (int i = 0; i < client.NecessaryProducts; i++)
-                { 
-                    Random random = new Random();
-                    int indexOfProduct = random.Next(_shelves.Count);
-                    Product productToTakeOf = _shelves[indexOfProduct];
-                    client.PutProducToGroceryBusket(productToTakeOf);
-                    _shelves.RemoveAt(indexOfProduct);
-                    System.Threading.Thread.Sleep(50);
+                {
+                    if (client.NecessaryProducts <= _shelves.Count)
+                    {
+                        Random random = new Random();
+                        int indexOfProduct = random.Next(_shelves.Count);
+                        Product productToTakeOf = _shelves[indexOfProduct];
+                        client.PutProducToGroceryBusket(productToTakeOf);
+                        _shelves.RemoveAt(indexOfProduct);
+                        System.Threading.Thread.Sleep(50);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Продукты закончились, приходите завтра");
+                    }   
                 }
             }
         }
@@ -152,8 +162,7 @@ namespace CSLight
         private int _money;
         private List<Product> _groceryBusket = new List<Product>();
 
-        public IReadOnlyList<Product> Busket;
-
+        public IReadOnlyList<Product> Busket { get; private set; }
         public Product ProductToPut { get; private set; }
         public Product ProductToReturn { get; private set; }
         public int NecessaryProducts { get; private set; } = 8;
@@ -170,7 +179,7 @@ namespace CSLight
         public void PutProducToGroceryBusket(Product productToPut)
         {
             ProductToPut = productToPut;
-            _groceryBusket.Add(productToPut);     
+            _groceryBusket.Add(productToPut);
         }
 
         public void TakePurchaseAmount()
@@ -181,24 +190,17 @@ namespace CSLight
         public void ShowInfo()
         {
             Console.SetCursorPosition(45, 0);
-            Console.WriteLine("Денег у клиента - " + _money);    
+            Console.WriteLine("Денег у клиента - " + _money);
         }
-        
+
         public void BuyProdutcs(int purchaseAmount)
         {
             _money -= purchaseAmount;
         }
 
-        public void ChekCountOfMoney(int purchaseAmount)
+        public void CompareMoneyWithPurchaseAmount(int purchaseAmount)
         {
-            if (_money >= purchaseAmount)
-            {
-                IsEnoughMoney = true;
-            }
-            else
-            {
-                IsEnoughMoney = false; 
-            }
+            IsEnoughMoney = _money >= purchaseAmount;
         }
 
         public void DeleteProduct()
@@ -222,8 +224,6 @@ namespace CSLight
             Price = price;
         }
     }
-
-
 }
 
 
