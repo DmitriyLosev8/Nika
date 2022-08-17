@@ -10,14 +10,8 @@ namespace CSLight
     {
         static void Main(string[] args)
         {
-            //Задание: Война:                 ДОДЕЛАТЬ
-
-            //RightLand rightLand = new RightLand();
-            //rightLand.PrepareFoFight();
-            //rightLand.ShowInfo();
-            //LeftLand leftLand = new LeftLand();
-            //leftLand.PrepareFoFight();
-            //leftLand.ShowInfo();
+            //Задание: Война:                 
+           
             Arena arena = new Arena();
             arena.BeginFight();
         }
@@ -30,36 +24,62 @@ namespace CSLight
         
        public void BeginFight()
         {
-            _leftLand.PrepareFoFight();
-            _rightLand.PrepareFoFight();
-
-            while (_leftLand.IsAnyWarriorAlive == true && _rightLand.IsAnyWarriorAlive == true)
-            {
-                Console.SetCursorPosition(25, 0);
-                Console.WriteLine("Перед вами арена, где сражаются взводы войнов Леволандии и Праволандии");
-                _leftLand.ShowInfo();
-                _rightLand.ShowInfo();
-                Console.SetCursorPosition(25, 20);
-                //Console.WriteLine("Нажмите Enter, чтобы начать бой");
-                //Console.ReadKey();
-                
-            }
+            _leftLand.PrepareForFight();
+            _rightLand.PrepareForFight();
+            Console.SetCursorPosition(25, 0);
+            Console.WriteLine("Перед вами арена, где сражаются взводы войнов Леволандии и Праволандии");
+            Console.SetCursorPosition(25, 2);
+            Console.WriteLine("Нажмите Enter, чтобы начать бой");
+            Console.ReadKey();
+            Fight();
         }
 
         private void Fight()
         {
-            _leftLand.DiagnoseWarriors();
-            _rightLand.DiagnoseWarriors();
+            int stepOfFight = 0;
             int indexOfLeftWarrior;
             int indexOfRightWarrior;
             Random random = new Random();
-            indexOfLeftWarrior = random.Next(_leftLand.PlatoonToFight.Count);
-            indexOfRightWarrior = random.Next(_rightLand.PlatoonToFight.Count);
-   
+
+            while (_leftLand.IsAnyWarriorAlive == true && _rightLand.IsAnyWarriorAlive == true)
+            {
+                stepOfFight++;
+                Console.Clear();
+                Console.SetCursorPosition(35, 0);
+                Console.WriteLine("СРАЖЕНИЕ:");
+                Console.SetCursorPosition(25, 20);
+
+                indexOfLeftWarrior = random.Next(_leftLand.PlatoonToFight.Count);
+                indexOfRightWarrior = random.Next(_rightLand.PlatoonToFight.Count);
+                
+                _leftLand.PlatoonToFight[indexOfLeftWarrior].UniqueSkill(stepOfFight);
+                _rightLand.PlatoonToFight[indexOfRightWarrior].TakeDamage(_leftLand.PlatoonToFight[indexOfLeftWarrior].Damage);
+                _rightLand.PlatoonToFight[indexOfRightWarrior].UniqueSkill(stepOfFight);
+                _leftLand.PlatoonToFight[indexOfLeftWarrior].TakeDamage(_rightLand.PlatoonToFight[indexOfRightWarrior].Damage);
+                
+                _leftLand.DiagnoseWarriors();
+                _leftLand.ShowInfo();
+                _rightLand.DiagnoseWarriors();
+                _rightLand.ShowInfo();
+                Console.SetCursorPosition(35, 2);
+
+                if (_leftLand.IsAnyWarriorAlive == false && _rightLand.IsAnyWarriorAlive == false)
+                {
+                    Console.WriteLine("Ничья!Все погибли!");
+                }
+                else if (_rightLand.IsAnyWarriorAlive == false)
+                {
+                    Console.WriteLine("Победила Леволандия!");
+                }       
+                else if (_leftLand.IsAnyWarriorAlive == false)
+                {
+                    Console.WriteLine("Победила Праволандия!");
+                }
+
+                Console.ReadKey();
+            }   
         }
     }
-
-   
 
     class Country
     {
@@ -68,18 +88,11 @@ namespace CSLight
         protected int ChanceToHirefRecruit;
         protected int ChanceToHireInfantryman;
         protected int ChanceToHireOfficer;
-        
 
         public IReadOnlyList<Warrior> PlatoonToFight { get; protected set; }
-        public bool IsAnyWarriorAlive { get; protected set; }
+        public bool IsAnyWarriorAlive  { get; protected set; } = true;
 
-       
-        public Country()
-        {       
-            IsAnyWarriorAlive = true;
-        }
-
-        public void PrepareFoFight()
+        public void PrepareForFight()
         {
             int minimalNumberOfWarriors = 10;
             int maximalNumberOfWarriors = 16;
@@ -91,42 +104,37 @@ namespace CSLight
             countOfRecruits = CountOfWarriors / ChanceToHirefRecruit;
             countOfInfantryman = CountOfWarriors / ChanceToHireInfantryman;
             countOfOfficers = CountOfWarriors / ChanceToHireOfficer;
-            AddWarriors(new Recruit(), countOfRecruits);
-            AddWarriors(new Infantryman(), countOfInfantryman);
-            AddWarriors(new Officer(), countOfOfficers);
+            AddWarriors(countOfRecruits, countOfInfantryman, countOfOfficers);
+            GetReadyFoFight();
+        }
+
+        public void GetReadyFoFight()
+        {
             PlatoonToFight = Platoon;
         }
 
-
-        protected void AddWarriors(Warrior warrior, int countOfNewWarriors)
+        protected void AddWarriors(int countOfRecruits,int countOfInfantryman,int countOfOfficers)
         {
-            for (int i = 0; i < countOfNewWarriors; i++)
+            for (int i = 0; i < countOfRecruits; i++)
             {
-                Platoon.Add(warrior);
+                Platoon.Add(new Recruit());
             }
 
+            for (int i = 0; i < countOfInfantryman; i++)
+            {
+                Platoon.Add(new Infantryman());
+            }
+           
+            for (int i = 0; i < countOfInfantryman; i++)
+            {
+                Platoon.Add(new Officer());
+            }
         }
-
-        //protected void AddWarriors(int countOfRecruits, int countOfInfantryman, int countOfOfficers)
-        //{
-        //    for (int i = 0; i < countOfRecruits; i++)
-        //    {
-        //        Platoon.Add(new Recruit());
-        //    }
-
-        //    for (int i = 0; i < countOfInfantryman; i++)
-        //    {
-        //        Platoon.Add(new Infantryman());
-        //    }
-
-        //    for (int i = 0; i < countOfOfficers; i++)
-        //    {
-        //        Platoon.Add(new Officer());
-        //    }
-        //}
 
         public void DiagnoseWarriors()
         {
+            int indexOfDeadWarior;
+
             for (int i = 0; i < PlatoonToFight.Count; i++)
             {
                 if (PlatoonToFight[i].Health > 0)
@@ -135,9 +143,16 @@ namespace CSLight
                 }
                 else
                 {
-                    Console.WriteLine("Все войны этого взвода погибли");
-                    IsAnyWarriorAlive = false;
+                    indexOfDeadWarior = i;
+                    Platoon.RemoveAt(indexOfDeadWarior);
+                    GetReadyFoFight();
+                    i--;
                 }
+            }
+
+            if (PlatoonToFight.Count == 0)
+            {
+                IsAnyWarriorAlive = false;
             }
         }
 
@@ -148,12 +163,9 @@ namespace CSLight
                 Console.Write(i + 1 + " - ");
                 PlatoonToFight[i].ShowIndicators();
             }
-        }
-
-       
+        }  
     }
 
-    
     class LeftLand : Country
     {
         public LeftLand() : base()
@@ -161,7 +173,6 @@ namespace CSLight
             ChanceToHirefRecruit = 5;
             ChanceToHireInfantryman = 2;
             ChanceToHireOfficer = 3;
-           // AddWarriors();
         }
 
         public override void ShowInfo()
@@ -179,8 +190,6 @@ namespace CSLight
             ChanceToHirefRecruit = 4;
             ChanceToHireInfantryman = 2;
             ChanceToHireOfficer = 4;
-            
-            //AddWarriors();
         }
 
         public override void ShowInfo()
@@ -202,16 +211,16 @@ namespace CSLight
 
     class Warrior
     {
-        protected int Damage;
-       
+        public int Damage { get; protected set; }   
         public int Health { get; protected set; }
         public int Armor { get; protected set; }
-        
+        public string Rank { get; protected set; }
+
         public virtual void UniqueSkill(int stepOfFigth) { }
 
         public void ShowIndicators()
         {
-            Console.WriteLine($"Жизни - {Health}, броня - {Armor}");
+            Console.WriteLine($"{Rank }, жизни - {Health}, броня - {Armor}");
         }
 
         public void TakeDamage(int damage)
@@ -219,15 +228,15 @@ namespace CSLight
             Health -= damage - Armor;
         }
     }
-
     
     class Recruit : Warrior
     {
         public Recruit()
         {
-            Health = 100;
-            Armor = 25;
-            Damage = 10;
+            Health = 30;
+            Armor = 6;
+            Damage = 15;
+            Rank = "Рекрут";
         }
 
         public override void UniqueSkill(int stepOfFigth)
@@ -236,17 +245,19 @@ namespace CSLight
 
             if (stepOfFigth % coolDown == 0)
             {
-                Health += 15;
+                Health += 5;
             }
         }
     }
+   
     class Infantryman : Warrior
     {
         public Infantryman()
         {
-            Health = 150;
-            Armor = 50;
-            Damage = 15;
+            Health = 40;
+            Armor = 8;
+            Damage = 20;
+            Rank = "Пехотинец";
         }
 
         public override void UniqueSkill(int stepOfFigth)
@@ -255,7 +266,7 @@ namespace CSLight
             
             if (stepOfFigth % coolDown == 0)
             {
-                Armor += 8;
+                Armor += 1;
             }
         }
     }
@@ -264,9 +275,10 @@ namespace CSLight
     {
         public Officer()
         {
-            Health = 200;
-            Armor = 75;
-            Damage = 20;
+            Health = 50;
+            Armor = 10;
+            Damage = 25;
+            Rank = "Офицер";
         }
 
         public override void UniqueSkill(int stepOfFigth)
@@ -275,7 +287,7 @@ namespace CSLight
 
             if (stepOfFigth % coolDown == 0)
             {
-                Damage += 5;
+                Damage += 3;
             }
         }
     }
