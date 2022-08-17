@@ -61,23 +61,27 @@ namespace CSLight
                 _leftLand.ShowInfo();
                 _rightLand.DiagnoseWarriors();
                 _rightLand.ShowInfo();
-                Console.SetCursorPosition(35, 2);
-
-                if (_leftLand.IsAnyWarriorAlive == false && _rightLand.IsAnyWarriorAlive == false)
-                {
-                    Console.WriteLine("Ничья!Все погибли!");
-                }
-                else if (_rightLand.IsAnyWarriorAlive == false)
-                {
-                    Console.WriteLine("Победила Леволандия!");
-                }       
-                else if (_leftLand.IsAnyWarriorAlive == false)
-                {
-                    Console.WriteLine("Победила Праволандия!");
-                }
-
+                FinishFight();
                 Console.ReadKey();
             }   
+        }
+
+        private void FinishFight()
+        {
+            Console.SetCursorPosition(35, 2);
+            
+            if (_leftLand.IsAnyWarriorAlive == false && _rightLand.IsAnyWarriorAlive == false)
+            {
+                Console.WriteLine("Ничья!Все погибли!");
+            }
+            else if (_rightLand.IsAnyWarriorAlive == false)
+            {
+                Console.WriteLine("Победила Леволандия!");
+            }
+            else if (_leftLand.IsAnyWarriorAlive == false)
+            {
+                Console.WriteLine("Победила Праволандия!");
+            }
         }
     }
 
@@ -211,6 +215,8 @@ namespace CSLight
 
     class Warrior
     {
+        protected int UniqueFeature;
+       
         public int Damage { get; protected set; }   
         public int Health { get; protected set; }
         public int Armor { get; protected set; }
@@ -237,6 +243,7 @@ namespace CSLight
             Armor = 6;
             Damage = 15;
             Rank = "Рекрут";
+            UniqueFeature = 5;
         }
 
         public override void UniqueSkill(int stepOfFigth)
@@ -245,7 +252,7 @@ namespace CSLight
 
             if (stepOfFigth % coolDown == 0)
             {
-                Health += 5;
+                Health += UniqueFeature;
             }
         }
     }
@@ -258,6 +265,7 @@ namespace CSLight
             Armor = 8;
             Damage = 20;
             Rank = "Пехотинец";
+            UniqueFeature = 1;
         }
 
         public override void UniqueSkill(int stepOfFigth)
@@ -266,7 +274,7 @@ namespace CSLight
             
             if (stepOfFigth % coolDown == 0)
             {
-                Armor += 1;
+                Armor += UniqueFeature;
             }
         }
     }
@@ -279,6 +287,7 @@ namespace CSLight
             Armor = 10;
             Damage = 25;
             Rank = "Офицер";
+            UniqueFeature = 3;
         }
 
         public override void UniqueSkill(int stepOfFigth)
@@ -287,7 +296,7 @@ namespace CSLight
 
             if (stepOfFigth % coolDown == 0)
             {
-                Damage += 3;
+                Damage += UniqueFeature;
             }
         }
     }
