@@ -9,295 +9,236 @@ namespace CSLight
     internal class Program
     {
         static void Main(string[] args)
-        {
-            //Задание: Война:                 
-           
-            Arena arena = new Arena();
-            arena.BeginFight();
-        }
-    }
+        {      // Задание: Хранилище книг:
 
-    class Arena
-    {
-       private LeftLand _leftLand = new LeftLand();  
-       private RightLand _rightLand = new RightLand();
-        
-       public void BeginFight()
-        {
-            _leftLand.PrepareForFight();
-            _rightLand.PrepareForFight();
-            Console.SetCursorPosition(25, 0);
-            Console.WriteLine("Перед вами арена, где сражаются взводы войнов Леволандии и Праволандии");
-            Console.SetCursorPosition(25, 2);
-            Console.WriteLine("Нажмите Enter, чтобы начать бой");
-            Console.ReadKey();
-            Fight();
-        }
+            Storage storage = new Storage();
+            bool isWorking = true;
 
-        private void Fight()
-        {
-            int stepOfFight = 0;
-            int indexOfLeftWarrior;
-            int indexOfRightWarrior;
-            Random random = new Random();
-
-            while (_leftLand.IsAnyWarriorAlive == true && _rightLand.IsAnyWarriorAlive == true)
+            while (isWorking)
             {
-                stepOfFight++;
-                Console.Clear();
                 Console.SetCursorPosition(35, 0);
-                Console.WriteLine("СРАЖЕНИЕ:");
-                Console.SetCursorPosition(25, 20);
+                Console.WriteLine("Перед вами хранилище книг");
+                Console.SetCursorPosition(0, 3);
+                Console.WriteLine("Чтобы добавить книгу, нажмите 1\nЧтобы удалить книгу, нажмите 2\nЧтобы посмотреть список всех книг, нажмите 3\n" +
+                    "Чтобы посмотмотреть список книг по определённому параметру, нажмите 4\nЧтобы выйти, нажмите 5");
+                string userInput = Console.ReadLine();
 
-                indexOfLeftWarrior = random.Next(_leftLand.PlatoonToFight.Count);
-                indexOfRightWarrior = random.Next(_rightLand.PlatoonToFight.Count);
-                
-                _leftLand.PlatoonToFight[indexOfLeftWarrior].UniqueSkill(stepOfFight);
-                _rightLand.PlatoonToFight[indexOfRightWarrior].TakeDamage(_leftLand.PlatoonToFight[indexOfLeftWarrior].Damage);
-                _rightLand.PlatoonToFight[indexOfRightWarrior].UniqueSkill(stepOfFight);
-                _leftLand.PlatoonToFight[indexOfLeftWarrior].TakeDamage(_rightLand.PlatoonToFight[indexOfRightWarrior].Damage);
-                
-                _leftLand.DiagnoseWarriors();
-                _leftLand.ShowInfo();
-                _rightLand.DiagnoseWarriors();
-                _rightLand.ShowInfo();
-                FinishFight();
+                switch (userInput)
+                {
+                    case "1":
+                        storage.PrepareForAddBook();
+                        break;
+                    case "2":
+                        storage.PrepareForDeleteBook();
+                        break;
+                    case "3":
+                        storage.ShowAllBooks();
+                        break;
+                    case "4":
+                        storage.ShowPartOfBooks();
+                        break;
+                    case "5":
+                        isWorking = false;
+                        break;
+                }
+
                 Console.ReadKey();
-            }   
-        }
-
-        private void FinishFight()
-        {
-            Console.SetCursorPosition(35, 2);
-            
-            if (_leftLand.IsAnyWarriorAlive == false && _rightLand.IsAnyWarriorAlive == false)
-            {
-                Console.WriteLine("Ничья!Все погибли!");
-            }
-            else if (_rightLand.IsAnyWarriorAlive == false)
-            {
-                Console.WriteLine("Победила Леволандия!");
-            }
-            else if (_leftLand.IsAnyWarriorAlive == false)
-            {
-                Console.WriteLine("Победила Праволандия!");
+                Console.Clear();
             }
         }
     }
 
-    class Country
+    class Storage
     {
-        protected List<Warrior> Platoon = new List<Warrior>();
-        protected int CountOfWarriors;
-        protected int ChanceToHirefRecruit;
-        protected int ChanceToHireInfantryman;
-        protected int ChanceToHireOfficer;
+        private List<Book> _books = new List<Book>();
 
-        public IReadOnlyList<Warrior> PlatoonToFight { get; protected set; }
-        public bool IsAnyWarriorAlive  { get; protected set; } = true;
-
-        public void PrepareForFight()
+        public void PrepareForAddBook()
         {
-            int minimalNumberOfWarriors = 10;
-            int maximalNumberOfWarriors = 16;
-            int countOfRecruits;
-            int countOfInfantryman;
-            int countOfOfficers;
-            Random random = new Random();
-            CountOfWarriors = random.Next(minimalNumberOfWarriors, maximalNumberOfWarriors);
-            countOfRecruits = CountOfWarriors / ChanceToHirefRecruit;
-            countOfInfantryman = CountOfWarriors / ChanceToHireInfantryman;
-            countOfOfficers = CountOfWarriors / ChanceToHireOfficer;
-            AddWarriors(countOfRecruits, countOfInfantryman, countOfOfficers);
-            GetReadyFoFight();
-        }
+            int userYearOfIssue;
+            int userPrice;
+            Console.WriteLine("Введите название книги:");
+            string userTitle = Console.ReadLine();
+            Console.WriteLine("Введите автора книги:");
+            string userAuthor = Console.ReadLine();
+            Console.WriteLine("Введите год издания книги:");
+            string userInput = Console.ReadLine();
+            bool isSuccessfull = int.TryParse(userInput, out userYearOfIssue);
 
-        public void GetReadyFoFight()
-        {
-            PlatoonToFight = Platoon;
-        }
-
-        protected void AddWarriors(int countOfRecruits,int countOfInfantryman,int countOfOfficers)
-        {
-            for (int i = 0; i < countOfRecruits; i++)
+            if (isSuccessfull)
             {
-                Platoon.Add(new Recruit());
-            }
+                Console.WriteLine("Введите цену книги:");
+                userInput = Console.ReadLine();
+                isSuccessfull = int.TryParse(userInput, out userPrice);
 
-            for (int i = 0; i < countOfInfantryman; i++)
-            {
-                Platoon.Add(new Infantryman());
-            }
-           
-            for (int i = 0; i < countOfInfantryman; i++)
-            {
-                Platoon.Add(new Officer());
-            }
-        }
-
-        public void DiagnoseWarriors()
-        {
-            int indexOfDeadWarior;
-
-            for (int i = 0; i < PlatoonToFight.Count; i++)
-            {
-                if (PlatoonToFight[i].Health > 0)
+                if (isSuccessfull)
                 {
-                    IsAnyWarriorAlive = true;
+                    AddBook(userTitle, userAuthor, userYearOfIssue, userPrice);
                 }
                 else
                 {
-                    indexOfDeadWarior = i;
-                    Platoon.RemoveAt(indexOfDeadWarior);
-                    GetReadyFoFight();
-                    i--;
+                    Console.WriteLine("Вы ввели не число");
                 }
             }
-
-            if (PlatoonToFight.Count == 0)
+            else
             {
-                IsAnyWarriorAlive = false;
+                Console.WriteLine("Вы ввели не число");
             }
         }
 
-        public virtual void ShowInfo()
+        private void AddBook(string userTitle, string userAuthor, int userYearOfIssue, int userPrice)
         {
-            for (int i = 0; i < PlatoonToFight.Count; i++)
+            _books.Add(new Book(userTitle, userAuthor, userYearOfIssue, userPrice));
+        }
+
+        public void PrepareForDeleteBook()
+        {
+            Console.WriteLine("Введите название книги, которую хотите удалить:");
+            string userTitle = Console.ReadLine();
+
+            for (int i = 0; i < _books.Count; i++)
             {
-                Console.Write(i + 1 + " - ");
-                PlatoonToFight[i].ShowIndicators();
-            }
-        }  
-    }
-
-    class LeftLand : Country
-    {
-        public LeftLand() : base()
-        {
-            ChanceToHirefRecruit = 5;
-            ChanceToHireInfantryman = 2;
-            ChanceToHireOfficer = 3;
-        }
-
-        public override void ShowInfo()
-        {
-            Console.SetCursorPosition(0, 5);
-            Console.WriteLine("Леволандия:");
-            base.ShowInfo();
-        }
-    }
-
-    class RightLand : Country
-    {
-        public RightLand() : base()
-        {
-            ChanceToHirefRecruit = 4;
-            ChanceToHireInfantryman = 2;
-            ChanceToHireOfficer = 4;
-        }
-
-        public override void ShowInfo()
-        {
-            int leftIndent = 50;
-            int topIndent = 5;
-            Console.SetCursorPosition(leftIndent, topIndent);
-            Console.WriteLine("Праволандия:");
-            
-            for (int i = 0; i < PlatoonToFight.Count; i++)
-            {
-                topIndent++;
-                Console.SetCursorPosition(leftIndent, topIndent);
-                Console.Write(i + 1 + " - ");
-                PlatoonToFight[i].ShowIndicators();
-            }    
-        }
-    }
-
-    class Warrior
-    {
-        protected int UniqueFeature;
-       
-        public int Damage { get; protected set; }   
-        public int Health { get; protected set; }
-        public int Armor { get; protected set; }
-        public string Rank { get; protected set; }
-
-        public virtual void UniqueSkill(int stepOfFigth) { }
-
-        public void ShowIndicators()
-        {
-            Console.WriteLine($"{Rank }, жизни - {Health}, броня - {Armor}");
-        }
-
-        public void TakeDamage(int damage)
-        {
-            Health -= damage - Armor;
-        }
-    }
-    
-    class Recruit : Warrior
-    {
-        public Recruit()
-        {
-            Health = 30;
-            Armor = 6;
-            Damage = 15;
-            Rank = "Рекрут";
-            UniqueFeature = 5;
-        }
-
-        public override void UniqueSkill(int stepOfFigth)
-        {
-            int coolDown = 3;
-
-            if (stepOfFigth % coolDown == 0)
-            {
-                Health += UniqueFeature;
+                if (_books[i].Title == userTitle)
+                {
+                    int bookToDelete = i;
+                    DeleteBook(bookToDelete);
+                }
             }
         }
-    }
-   
-    class Infantryman : Warrior
-    {
-        public Infantryman()
+
+        private void DeleteBook(int bookToDelete)
         {
-            Health = 40;
-            Armor = 8;
-            Damage = 20;
-            Rank = "Пехотинец";
-            UniqueFeature = 1;
+            _books.RemoveAt(bookToDelete);
         }
 
-        public override void UniqueSkill(int stepOfFigth)
+        public void ShowAllBooks()
         {
-            int coolDown = 4;
-            
-            if (stepOfFigth % coolDown == 0)
+            Console.WriteLine("Вот список всех книг:\n");
+
+            for (int i = 0; i < _books.Count; i++)
             {
-                Armor += UniqueFeature;
+                Console.WriteLine($"Название книги - {_books[i].Title}, её автор - {_books[i].Author}, год издания - {_books[i].YearOfIisue} и цена - {_books[i].Price}");
+            }
+        }
+
+        public void ShowPartOfBooks()
+        {
+            Console.WriteLine("Выберите параметр по которому вы хотите отсортитировать и посмотреть книги:");
+            Console.WriteLine("По названию, нажмите 1\nПо автору, нажмите 2\nПо году выпуска, нажмите 3\nПо цене, нажмите 4");
+            string userInput = Console.ReadLine();
+
+            switch (userInput)
+            {
+                case "1":
+                    ShowTitle();
+                    break;
+                case "2":
+                    ShowAuthor();
+                    break;
+                case "3":
+                    ShowYearOfIssue();
+                    break;
+                case "4":
+                    ShowPrice();
+                    break;
+            }
+        }
+
+        private void ShowTitle()
+        {
+            Console.WriteLine("Введите название книги:");
+            string userTitle = Console.ReadLine();
+            Console.WriteLine("Вот список книг с этим названием:\n");
+
+            for (int i = 0; i < _books.Count; i++)
+            {
+                if (_books[i].Title == userTitle)
+                {
+                    Console.WriteLine($"Название книги - {_books[i].Title}, её автор - {_books[i].Author}, год издания - {_books[i].YearOfIisue} и цена - {_books[i].Price}");
+                }
+            }
+        }
+
+        private void ShowAuthor()
+        {
+            Console.WriteLine("Введите автора книги:");
+            string userAuthor = Console.ReadLine();
+            Console.WriteLine("Вот список книг с этим автором:\n");
+
+            for (int i = 0; i < _books.Count; i++)
+            {
+                if (_books[i].Author == userAuthor)
+                {
+                    Console.WriteLine($"Название книги - {_books[i].Title}, её автор - {_books[i].Author}, год издания - {_books[i].YearOfIisue} и цена - {_books[i].Price}");
+                }
+            }
+        }
+
+        private void ShowYearOfIssue()
+        {
+            int userYearOfIssue;
+            Console.WriteLine("Введите год издания книги:");
+            string userInput = Console.ReadLine();
+            bool isSuccessfull = int.TryParse(userInput, out userYearOfIssue);
+
+            if (isSuccessfull)
+            {
+                Console.WriteLine("Вот список книг этого года:\n");
+
+                for (int i = 0; i < _books.Count; i++)
+                {
+                    if (_books[i].YearOfIisue == userYearOfIssue)
+                    {
+                        Console.WriteLine($"Название книги - {_books[i].Title}, её автор - {_books[i].Author}, год издания - {_books[i].YearOfIisue} и цена - {_books[i].Price}");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Вы ввели не число");
+            }
+        }
+
+        private void ShowPrice()
+        {
+            bool isSuccessfull;
+            string userInput;
+            int userPrice;
+            Console.WriteLine("Введите цену книги:");
+            userInput = Console.ReadLine();
+            isSuccessfull = int.TryParse(userInput, out userPrice);
+
+            if (isSuccessfull)
+            {
+                Console.WriteLine("Вот список книг с такой ценой:\n");
+
+                for (int i = 0; i < _books.Count; i++)
+                {
+                    if (_books[i].Price == userPrice)
+                    {
+                        Console.WriteLine($"Название книги - {_books[i].Title}, её автор - {_books[i].Author}, год издания - {_books[i].YearOfIisue} и цена - {_books[i].Price}");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Вы ввели не число");
             }
         }
     }
 
-    class Officer : Warrior
+    class Book
     {
-        public Officer()
-        {
-            Health = 50;
-            Armor = 10;
-            Damage = 25;
-            Rank = "Офицер";
-            UniqueFeature = 3;
-        }
+        public string Title { get; private set; }
+        public string Author { get; private set; }
+        public int YearOfIisue { get; private set; }
+        public int Price { get; private set; }
 
-        public override void UniqueSkill(int stepOfFigth)
+        public Book(string title, string author, int yearOfIisue, int price)
         {
-            int coolDown = 5;
-
-            if (stepOfFigth % coolDown == 0)
-            {
-                Damage += UniqueFeature;
-            }
+            Title = title;
+            Author = author;
+            YearOfIisue = yearOfIisue;
+            Price = price;
         }
     }
 }
