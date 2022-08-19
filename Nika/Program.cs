@@ -9,38 +9,66 @@ namespace CSLight
     internal class Program
     {
         static void Main(string[] args)
-        {      // Задание: Амнистия:
+        {      // Задание: Поиск преступника:
 
-            List<Prisoner> prisoners = new List<Prisoner> {new Prisoner("Коля", "Грабёж"),new Prisoner("Боря", "Антиправительственное"),new Prisoner("Егор", "Антиправительственное"),new Prisoner("Саша", "Убийство"),
-                new Prisoner("Толя", "Грабёж"),  new Prisoner("Гена", "ДТП"), new Prisoner("Степан", "Кража"), new Prisoner("Женя", "Антиправительственное")};
+            List<Сriminal> criminals = new List<Сriminal> {new Сriminal(170,65,false,"Русский", "Жора"), new Сriminal(178, 80, false, "Русский", "Гена"), new Сriminal(165, 58, true, "Армянин", "Ашот"), 
+                new Сriminal(181, 95, false, "Грузин", "Гиви"),new Сriminal(176,60,false,"Армянин", "Артур"),new Сriminal(160,48,false,"Грек", "Даниил"),new Сriminal(192,102,false,"Русский", "Коля"),
+                new Сriminal(173,86,true,"Русский", "Саша")};
 
-            Console.WriteLine("Список преступников до амнистии:\n");
-
-            foreach (var prisoner in prisoners)
+            int weightOfCriminal;
+            int growthOfCriminal;
+            Console.WriteLine("Введите рост преступника ДО какого показателя вам необходимо:");
+            string userInput = Console.ReadLine();
+            bool isSuccessful = int.TryParse(userInput, out growthOfCriminal);
+            
+            if (isSuccessful)
             {
-                Console.WriteLine(prisoner.Name + " - " + prisoner.Offense);
+                Console.WriteLine("Введите вес преступника ДО какого показателя вам необходимо:");
+                userInput = Console.ReadLine();
+                isSuccessful = int.TryParse(userInput, out weightOfCriminal);
+
+                if (isSuccessful)
+                {
+                    Console.WriteLine("Введите национальность преступника:");
+                    string nationalityOfCriminal = Console.ReadLine();
+
+                    var criminalsWithNecessaryGrowth = criminals.Where(criminal => criminal.Growth < growthOfCriminal);
+                    var criminalsWithNecessaryGrowthAndWeight = criminalsWithNecessaryGrowth.Where(criminal => criminal.Weight < weightOfCriminal);
+                    var criminalsWithNecessaryGrowthAndWeightAndNationality = criminalsWithNecessaryGrowthAndWeight.Where(criminal => criminal.Nationality == nationalityOfCriminal);
+                    var necessaryCriminals = criminalsWithNecessaryGrowthAndWeightAndNationality.Where(criminal => criminal.IsArrested == false);
+
+                    foreach (var necessaryCriminal in necessaryCriminals)
+                    {
+                        Console.WriteLine(necessaryCriminal.Name);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не число.");
+                }
             }
-
-            var notAmnestiedPrisoners = prisoners.Where(prisoner => prisoner.Offense != "Антиправительственное");
-
-            Console.WriteLine("\n\nСписок преступников после амнистии:\n");
-
-            foreach (var prisoner in notAmnestiedPrisoners)
+            else
             {
-                Console.WriteLine(prisoner.Name + " - " + prisoner.Offense);
+                Console.WriteLine("Вы ввели не число.");
             }
-        }          
+        }             
     }
 
-    class Prisoner
+    class Сriminal
     {
-        public string Name { get; private set; }
-        public string Offense { get; private set; }
-
-        public Prisoner(string name, string offense)
+        public string Name { get; private set; }    
+        public int Growth { get; private set; }
+        public int Weight { get; private set; }
+        public bool IsArrested { get; private set; }
+        public string Nationality { get; private set; }
+       
+        public Сriminal(int growth, int weight, bool isArrested, string nationality, string name)
         {
+            Growth = growth;
+            Weight = weight;
+            IsArrested = isArrested;
+            Nationality = nationality;
             Name = name;
-            Offense = offense;
         }
     }
 }
