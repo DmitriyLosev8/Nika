@@ -9,47 +9,54 @@ namespace CSLight
     internal class Program
     {
         static void Main(string[] args)
-        {      // Задание: Топ игроков:
+        {      // Задание: Объединение войск:
 
-            List<Player> players = new List<Player> { new Player("Бритва", 85, 40), new Player("Дымок", 70, 43), new Player("Терминатор", 15, 10), new Player("Гроза", 105, 54), new Player("Пуля", 67, 58),
-            new Player("Девятка", 90, 87),new Player("Гараж", 74, 60),new Player("Буря", 10, 2),new Player("Страх", 150, 180),new Player("Нож", 11, 18),};
+            List<Warrior> leftWarriors = new List<Warrior> { (new Warrior("Гена", "Борисов")), (new Warrior("Дима", "Аникеев")), (new Warrior("Саша", "Бондаренко")),
+                (new Warrior("Саша", "Степанов")),(new Warrior("Боря", "Андропов")),(new Warrior("Семён", "Бонько")),(new Warrior("Никита", "Опа")),(new Warrior("Степан", "Борислав")), };
 
-            var firstTopLevelPlayer = players.Max(player => player.Level);
-            var secondTopLevelPlayer = players.Where(player => player.Level < firstTopLevelPlayer).Max(player => player.Level);
-            var thirdTopLevelPlayer = players.Where(player => player.Level < secondTopLevelPlayer).Max(player => player.Level);
-            var topThreeLevelPlayers = players.Where(player => player.Level >= thirdTopLevelPlayer);
+            List<Warrior> rigthWarriors = new List<Warrior> { (new Warrior("Саша", "Задорожный")), (new Warrior("Дима", "Лосев")), (new Warrior("Сергей", "Бодров")),
+                (new Warrior("Сергей", "Шнуров")),(new Warrior("Незами", "Мамедов")),(new Warrior("Ксения", "Задорожная")),(new Warrior("Любовь", "Двойнина")),(new Warrior("Владимир", "Двойнин")), };
 
-            Console.WriteLine("Вот топ 3 игроков по уровню:\n");
+           var unitedSqaud = rigthWarriors.Union(leftWarriors.Where(warrior => warrior.LastName.StartsWith("Б"))).ToList();
+           rigthWarriors = unitedSqaud;
+          
+            for (int i = 0; i < leftWarriors.Count; i++)
+            {
+                for (int j = 0; j < rigthWarriors.Count; j++)
+                {
+                    if (leftWarriors[i] == rigthWarriors[j])
+                    {
+                        leftWarriors.RemoveAt(i);
+                    }
+                }
+            }
+
+            Console.WriteLine("Левый отряд без бойцов с фамилией на букву Б:");
+            
+            foreach (var warrior in leftWarriors)
+            {
+                Console.WriteLine(warrior.Name + " " + warrior.LastName);
+            }
+
+            Console.WriteLine("\n\nПравый отряд с перенесёнными бойцами с фамилией на букву Б:");
            
-            foreach(var player in topThreeLevelPlayers)
+            foreach (var warrior in rigthWarriors)
             {
-                Console.WriteLine(player.Name);
+                Console.WriteLine(warrior.Name + " " + warrior.LastName);
             }
 
-            var firstTopPowerPlayer = players.Max(player => player.Power);
-            var secondTopPowerPlayer = players.Where(player => player.Power < firstTopPowerPlayer).Max(player => player.Power);
-            var thirdTopPowerPlayer = players.Where(player => player.Power < secondTopPowerPlayer).Max(player => player.Power);
-            var topThreePowerPlayers = players.Where(player => player.Power >= thirdTopPowerPlayer);
-
-            Console.WriteLine("\n\nВот топ 3 игроков по силе:\n");
-
-            foreach (var player in topThreePowerPlayers)
-            {
-                Console.WriteLine(player.Name);
-            }
-        }     
+        }
     }
 
-    class Player
+    class Warrior
     {
-       public string Name { get; private set; }
-       public int Level { get; private set; }
-       public int Power { get; private set; }
-        public Player(string name, int level, int power)
+        public string Name { get; private set; }
+        public string LastName { get; private set; }
+
+        public Warrior(string name, string lastName)
         {
             Name = name;
-            Level = level;
-            Power = power;
+            LastName = lastName;
         }
     }
 }
